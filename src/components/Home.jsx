@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getTenEventsByCity } from "../services/ticketmasterServices";
+import CityEventCard from "./CityEventCard";
 
 export default function Home() {
   const cities = ["Oslo", "Berlin", "London"];
@@ -28,11 +29,11 @@ export default function Home() {
         ))}
       </section>
 
-      <ul>
+      <section>
         {cityEvents.map((event) => (
-          <li key={event.id}>{event.name}</li>
+          <CityEventCard key={event.id} eventData={event} />
         ))}
-      </ul>
+      </section>
     </main>
   );
 }
