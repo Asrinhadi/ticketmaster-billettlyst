@@ -1,36 +1,45 @@
+import '../styles/Home.scss';
 import { useState, useEffect } from "react";
 import { getTenEventsByCity } from "../services/ticketmasterServices";
+import { CITY_NAMES } from "../constants/cityLocations";
 import CityEventCard from "./CityEventCard";
 
 export default function Home() {
-  const cities = ["Oslo", "Berlin", "London"];
-  const [selectedCity, setSelectedCity] = useState("Oslo");
-  const [cityEvents, setCityEvents] = useState([]);
+  const [activeCity, setActiveCity] = useState("Oslo");
+  const [events, setEvents] = useState([]);
 
-  const loadCityEvents = async (cityName) => {
-    const events = await getTenEventsByCity(cityName);
-    setCityEvents(events);
-    setSelectedCity(cityName);
+  const handleCityClick = async (city) => {
+    const data = await getTenEventsByCity(city);
+    setEvents(data);
+    setActiveCity(city);
   };
 
   useEffect(() => {
-    loadCityEvents("Oslo");
+    handleCityClick("Oslo");
   }, []);
 
   return (
     <main>
-      <h1>Det som skjer i {selectedCity}!</h1>
-
-      <section>
-        {cities.map((city) => (
-          <button key={city} onClick={() => loadCityEvents(city)}>
-            {city}
-          </button>
-        ))}
+      <h1>Oppdag uforglemmelige opplevelser rundt i verden!</h1>
+      
+      <section className="city-section">
+        <h2>Hva skjer i {activeCity}?</h2>
+        
+        <nav className="city-buttons">
+          {CITY_NAMES.map((city) => (
+            <button 
+              key={city}
+              className={activeCity === city ? 'active' : ''}
+              onClick={() => handleCityClick(city)}
+            >
+              {city}
+            </button>
+          ))}
+        </nav>
       </section>
 
-      <section>
-        {cityEvents.map((event) => (
+      <section className="event-grid">
+        {events.map((event) => (
           <CityEventCard key={event.id} eventData={event} />
         ))}
       </section>
