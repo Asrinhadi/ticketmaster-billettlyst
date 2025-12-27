@@ -1,3 +1,4 @@
+
 export const CITY_LOCATIONS = [
   { name: "Oslo", country: "Norge" },
   { name: "Stockholm", country: "Sverige" },

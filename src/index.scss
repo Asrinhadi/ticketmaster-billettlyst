@@ -1,10 +1,10 @@
-@import './styles/_global.scss';
+@use './styles/global';
 
 :root {
-  font-family: $Exo2;
+  font-family: global.$Exo2;
   line-height: 1.5;
-  font-weight: $Regular;
-  color: $LightWhite;
+  font-weight: global.$Regular;
+  color: global.$LightWhite;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -22,20 +22,20 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: $DarkGray;
-  color: $LightWhite;
+  background-color: global.$DarkGray;
+  color: global.$LightWhite;
 }
 
 a {
-  font-weight: $SemiBold;
+  font-weight: global.$SemiBold;
   text-decoration: inherit;
-  @include lys-bla-hover($LightWhite);
+  @include global.lys-bla-hover(global.$LightWhite);
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-  font-weight: $Bold;
+  font-weight: global.$Bold;
 }
 
 button {
@@ -43,16 +43,16 @@ button {
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  font-weight: $SemiBold;
+  font-weight: global.$SemiBold;
   font-family: inherit;
-  background-color: $MediumGray;
+  background-color: global.$MediumGray;
   cursor: pointer;
-  color: $LightWhite;
+  color: global.$LightWhite;
   transition: color 0.3s ease, background-color 0.3s ease, border-color 0.25s;
   
   &:hover {
-    color: $LightBlueHover;
-    border-color: $LightBlueHover;
+    color: global.$LightBlueHover;
+    border-color: global.$LightBlueHover;
     cursor: pointer;
   }
 

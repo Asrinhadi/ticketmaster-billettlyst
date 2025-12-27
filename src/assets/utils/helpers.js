@@ -1,19 +1,34 @@
+
+
 export const convertDate = (dateString) => {
-  if (!dateString) return "Ukjent dato";
-  return dateString.split("-").reverse().join(".");
+    return dateString.split("-").reverse().join(".");
 };
+
+
+
 
 export const choseEventPhoto = (event, minWidth, maxWidth, ratio = "16_9") => {
-  if (!event?.images?.length) {
-    return "https://placehold.co/600x400?text=Billettlyst";
-  }
-
-  const image = event.images.find(
-    (img) =>
-      img.ratio === ratio &&
-      img.width >= minWidth &&
-      img.width <= maxWidth
-  );
-
-  return image ? image.url : "https://placehold.co/600x400?text=Billettlyst";
+    const validTypes = ["jpg", "jpeg", "png", "webp"];
+    
+    if (!("images" in event)) {
+        return "https://placehold.co/600x400?text=Billettlyst";
+    }
+    
+    const chosenImage = event.images.find((img) => 
+        img.ratio === ratio && 
+        (img.width <= maxWidth && img.width >= minWidth)
+    );
+    
+    if (!chosenImage || !("url" in chosenImage)) {
+        return "https://placehold.co/600x400?text=Billettlyst";
+    }
+    
+    const urlParts = chosenImage.url.split(".");
+    
+    if (!validTypes.includes(urlParts.pop())) {
+        return "https://placehold.co/600x400?text=Billettlyst";
+    }
+    
+    return chosenImage.url;
 };
+

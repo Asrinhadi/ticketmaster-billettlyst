@@ -1,0 +1,39 @@
+@use "global";
+
+.main-link {
+  position: absolute;
+  top: auto;
+  left: -100rem;
+  background-color: global.$MediumBlue;
+  color: global.$White;
+  padding: 1rem;
+  font-size: 1.5rem;
+
+  &:focus {
+    left: auto;
+    top: auto;
+  }
+}
+
+footer {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 3rem;
+  padding: 1rem;
+  background-color: global.$DarkBlueHover;
+
+  a {
+    color: global.$Pink;
+    text-decoration: none;
+
+    &:hover {
+      color: global.$LightBlueHover;
+    }
+  }
+}
+
+main {
+  min-height: 100vh;
+}
