@@ -25,27 +25,10 @@
 }
 
 .festival-grid {
-    @include global.flex-display(row, wrap);
-    gap: 1.6rem;
+    display: grid;
+    grid-template-columns: repeat(2, 280px);
+    gap: 1.5rem;
     justify-content: center;
-    
-    .festival-card {
-        background-color: global.$DarkGray;
-        color: global.$Pink;
-        padding: 2rem;
-        border-radius: 1rem;
-        text-align: center;
-        min-width: 250px;
-        
-        h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        p {
-            color: global.$MediumGray;
-        }
-    }
 }
 
 .city-section {
@@ -90,7 +73,14 @@
 }
 
 .events-grid {
-    @include global.flex-display(row, wrap);
-    gap: 1.6rem;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+@media (max-width: 620px) {
+    .festival-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
 }

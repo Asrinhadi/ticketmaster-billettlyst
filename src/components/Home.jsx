@@ -1,57 +1,40 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import CityEventCard from './CityEventCard';
-import { getTenEventsByCity } from '../services/ticketmasterServices';
+import FestivalCard from './FestivalCard';
+import { getTenEventsByCity, getFestivalsByIds } from '../services/ticketmasterServices';
+import { CITY_NAMES } from '../constants/cityLocations';
+import { MAIN_FESTIVALS } from '../constants/festivals';
 import '../styles/Home.scss';
 
-//////Bare testingg nååååå
-const FESTIVAL_DATA = [
-    {
-        id: "neon-festival",
-        name: "NEON Festival",
-        image: "https://s1.ticketm.net/dam/a/c62/c0f1f62a-c4b3-4d59-9d23-f89c6e1a1c62_RECOMENDATION_16_9.jpg",
-        url: "https://www.ticketmaster.no/artist/neon-festival-billetter/1117273"
-    },
-    {
-        id: "skeikampenfestivalen",
-        name: "Skeikampenfestivalen",
-        image: "https://s1.ticketm.net/dam/a/c62/c0f1f62a-c4b3-4d59-9d23-f89c6e1a1c62_RECOMENDATION_16_9.jpg",
-        url: "https://www.ticketmaster.no/artist/skeikampenfestivalen-billetter/1018941"
-    },
-    {
-        id: "tons-of-rock",
-        name: "Tons of Rock",
-        image: "https://s1.ticketm.net/dam/a/c62/c0f1f62a-c4b3-4d59-9d23-f89c6e1a1c62_RECOMENDATION_16_9.jpg",
-        url: "https://www.ticketmaster.no/artist/tons-of-rock-/935524"
-    },
-    {
-        id: "findings-festival",
-        name: "Findings Festival",
-        image: "https://s1.ticketm.net/dam/a/c62/c0f1f62a-c4b3-4d59-9d23-f89c6e1a1c62_RECOMENDATION_16_9.jpg",
-        url: "https://www.ticketmaster.no/artist/findings-festival-billetter/953636"
-    }
-];
-
 export default function Home() {
-    const [cityEvents, setCityEvents] = useState([]);
+    const [festivals, setFestivals] = useState([]);
+    const [events, setEvents] = useState([]);
     const [selectedCity, setSelectedCity] = useState("Oslo");
 
-    const loadCityEvents = async (cityName) => {
+    const fetchFestivals = async () => {
         try {
-            const data = await getTenEventsByCity(cityName);
-            setCityEvents(data || []);
-            setSelectedCity(cityName);
+            const data = await getFestivalsByIds(MAIN_FESTIVALS);
+            setFestivals(data || []);
         } catch (error) {
-            console.error("Kunne ikke hente byevents", error);
-            setCityEvents([]);
+            console.error("kunne ikke hente festivaler", error);
+        }
+    };
+
+    const fetchCityEvents = async (city) => {
+        try {
+            const data = await getTenEventsByCity(city);
+            setEvents(data || []);
+            setSelectedCity(city);
+        } catch (error) {
+            console.error("kunne ikke hente events for byen", error);
+            setEvents([]);
         }
     };
 
     useEffect(() => {
-        loadCityEvents("Oslo");
+        fetchFestivals();
+        fetchCityEvents("Oslo");
     }, []);
-
-    const cities = ["Oslo", "Stockholm", "Berlin", "London", "Edinburgh"];
 
     return (
         <main className="home-page">
@@ -59,33 +42,29 @@ export default function Home() {
             
             <section className="festival-section">
                 <h2>De kuleste festivalene!!!</h2>
-                <section className="festival-grid">
-                    {FESTIVAL_DATA.map((festival) => (
-                        <article key={festival.id} className="festival-card">
-                            <img src={festival.image} alt={festival.name} />
-                            <h3>{festival.name}</h3>
-                            <a 
-                                href={festival.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="festival-link"
-                            >
-                                Les mer
-                            </a>
-                        </article>
-                    ))}
-                </section>
+                <div className="festival-grid">
+                    {festivals.length > 0 ? (
+                        festivals.map((festival) => (
+                            <FestivalCard 
+                                key={festival.id} 
+                                festival={festival} 
+                            />
+                        ))
+                    ) : (
+                        <p>Laster festivaler...</p>
+                    )}
+                </div>
             </section>
 
             <section className="city-section">
                 <h2>Oppdag uforglemmelige opplevelser rundt i verden!</h2>
                 
                 <ul className="city-buttons">
-                    {cities.map((city) => (
+                    {CITY_NAMES.map((city) => (
                         <li key={city}>
                             <button 
                                 className={`location-btn ${selectedCity === city ? 'active' : ''}`}
-                                onClick={() => loadCityEvents(city)}
+                                onClick={() => fetchCityEvents(city)}
                             >
                                 {city}
                             </button>
@@ -94,9 +73,9 @@ export default function Home() {
                 </ul>
                 
                 <h2>Det som skjer i {selectedCity}!</h2>
-                <section className="events-grid">
-                    {cityEvents.length > 0 ? (
-                        cityEvents.map((event) => (
+                <div className="events-grid">
+                    {events.length > 0 ? (
+                        events.map((event) => (
                             <CityEventCard 
                                 key={event.id} 
                                 eventData={event} 
@@ -105,7 +84,7 @@ export default function Home() {
                     ) : (
                         <p>Laster events for {selectedCity}...</p>
                     )}
-                </section>
+                </div>
             </section>
         </main>
     );

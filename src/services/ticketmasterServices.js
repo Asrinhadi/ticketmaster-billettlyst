@@ -25,23 +25,26 @@ export const getTenEventsByCity = async (cityName) => {
 };
 
 
-//festivalene ?
-export const getFestivalsByIds = async (festivalIds) => {
-    let response = null;
-    
-    try {
-        const data = await apiCall(
-            `${BASE_URL}/${API_VERSION}/events?apikey=${API_KEY}&id=${festivalIds}&size=20`
-        );
-        const result = await data.json();
-        response = result._embedded?.events;
-    } catch (error) {
-        console.error("noe er feil ved innhenting av festivalids", error);
-    }
-    
-    return response || [];
-};
 
 
+/*export const getFestivalsByIds = async (attractionId) => {
+    let apiresponse = null;
+    await fetch(`${BASE_URL}/${API_VERSION}/events?apikey=${API_KEY}&attractionId=${attractionId}&locale=*`)
+    .then((response) => response.json())
+    .then((data) => apiresponse = data._embedded?.events)
+
+    return apiresponse || [];
+}
+    */
 
 
+//HENTER festivaler basert på attraction ids
+
+export const getFestivalsByIds = async (attractionIds) => {
+    let apiresponse = null;
+    await fetch(`${BASE_URL}/${API_VERSION}/attractions?apikey=${API_KEY}&id=${attractionIds}&locale=*`)
+    .then((response) => response.json())
+    .then((data) => apiresponse = data._embedded?.attractions)
+
+    return apiresponse || [];
+}
