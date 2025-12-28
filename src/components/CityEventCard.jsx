@@ -23,5 +23,6 @@ export default function CityEventCard({ event }) {
   );
 }
 
+
 // (_embedded.venues[0]) fra Ticketmaster API
 // Ref: https://developer.ticketmaster.com/products-and-docs/tutorials/events-search/search_events_with_discovery_api.html
