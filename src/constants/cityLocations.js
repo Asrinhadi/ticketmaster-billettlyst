@@ -1,5 +1,4 @@
-
-export const CITY_LOCATIONS = [
+export const CITIES = [
   { name: "Oslo", country: "Norge" },
   { name: "Stockholm", country: "Sverige" },
   { name: "Berlin", country: "Tyskland" },
@@ -7,4 +6,4 @@ export const CITY_LOCATIONS = [
   { name: "Edinburgh", country: "Skottland" }
 ];
 
-export const CITY_NAMES = CITY_LOCATIONS.map(city => city.name);
+export const CITY_NAMES = CITIES.map(c => c.name);

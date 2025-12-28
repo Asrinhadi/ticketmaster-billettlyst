@@ -1,39 +1,30 @@
 import { useState, useEffect } from 'react';
 import CityEventCard from './CityEventCard';
 import FestivalCard from './FestivalCard';
-import { getTenEventsByCity, getFestivalsByIds } from '../services/ticketmasterServices';
+import { getCityEvents, getFestivals } from '../services/ticketmasterServices';
 import { CITY_NAMES } from '../constants/cityLocations';
-import { MAIN_FESTIVALS } from '../constants/festivals';
+import { FESTIVAL_IDS } from '../constants/festivals';
 import '../styles/Home.scss';
 
 export default function Home() {
     const [festivals, setFestivals] = useState([]);
     const [events, setEvents] = useState([]);
-    const [selectedCity, setSelectedCity] = useState("Oslo");
+    const [activeCity, setActiveCity] = useState("Oslo");
 
-    const fetchFestivals = async () => {
-        try {
-            const data = await getFestivalsByIds(MAIN_FESTIVALS);
-            setFestivals(data || []);
-        } catch (error) {
-            console.error("kunne ikke hente festivaler", error);
-        }
-    };
+    async function loadFestivals() {
+        const data = await getFestivals(FESTIVAL_IDS);
+        setFestivals(data);
+    }
 
-    const fetchCityEvents = async (city) => {
-        try {
-            const data = await getTenEventsByCity(city);
-            setEvents(data || []);
-            setSelectedCity(city);
-        } catch (error) {
-            console.error("kunne ikke hente events for byen", error);
-            setEvents([]);
-        }
-    };
+    async function loadCityEvents(city) {
+        setActiveCity(city);
+        const data = await getCityEvents(city);
+        setEvents(data);
+    }
 
     useEffect(() => {
-        fetchFestivals();
-        fetchCityEvents("Oslo");
+        loadFestivals();
+        loadCityEvents("Oslo");
     }, []);
 
     return (
@@ -42,29 +33,26 @@ export default function Home() {
             
             <section className="festival-section">
                 <h2>De kuleste festivalene!!!</h2>
-                <div className="festival-grid">
+                <ul className="festival-grid">
                     {festivals.length > 0 ? (
-                        festivals.map((festival) => (
-                            <FestivalCard 
-                                key={festival.id} 
-                                festival={festival} 
-                            />
+                        festivals.map(fest => (
+                            <FestivalCard key={fest.id} festival={fest} />
                         ))
                     ) : (
                         <p>Laster festivaler...</p>
                     )}
-                </div>
+                </ul>
             </section>
 
             <section className="city-section">
                 <h2>Oppdag uforglemmelige opplevelser rundt i verden!</h2>
                 
                 <ul className="city-buttons">
-                    {CITY_NAMES.map((city) => (
+                    {CITY_NAMES.map(city => (
                         <li key={city}>
                             <button 
-                                className={`location-btn ${selectedCity === city ? 'active' : ''}`}
-                                onClick={() => fetchCityEvents(city)}
+                                className={`location-btn ${activeCity === city ? 'active' : ''}`}
+                                onClick={() => loadCityEvents(city)}
                             >
                                 {city}
                             </button>
@@ -72,19 +60,16 @@ export default function Home() {
                     ))}
                 </ul>
                 
-                <h2>Det som skjer i {selectedCity}!</h2>
-                <div className="events-grid">
+                <h2>Det som skjer i {activeCity}!</h2>
+                <ul className="events-grid">
                     {events.length > 0 ? (
-                        events.map((event) => (
-                            <CityEventCard 
-                                key={event.id} 
-                                eventData={event} 
-                            />
+                        events.map(ev => (
+                            <CityEventCard key={ev.id} event={ev} />
                         ))
                     ) : (
-                        <p>Laster events for {selectedCity}...</p>
+                        <p>Laster events for {activeCity}...</p>
                     )}
-                </div>
+                </ul>
             </section>
         </main>
     );

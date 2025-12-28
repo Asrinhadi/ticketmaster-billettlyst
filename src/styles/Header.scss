@@ -1,13 +1,13 @@
-
 @use "global";
 
 header {
-  width: 100%;
-  @include global.flex-display(row, wrap, space-between, center, 1rem);
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 2rem;
   background: global.$MediumGray;
-  
 }
 
 .site-logo {
@@ -17,38 +17,30 @@ header {
   color: global.$DeepPink;
   text-decoration: none;
 
-  &:hover {
-    color: global.$Pink;
-  }
+  &:hover { color: global.$Pink; }
 }
 
 nav {
-  @include global.flex-display(row, wrap, flex-end, center, 1.5rem);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 
   a {
     color: global.$LightWhite;
     text-decoration: none;
-    font-size: 0.95rem;
     font-weight: global.$SemiBold;
-    transition: color 0.3s ease;
 
-    &:hover {
-      color: global.$LightBlueHover;
-    }
-
-    &.active {
-      color: global.$DeepPink;
-    }
+    &:hover { color: global.$LightBlueHover; }
+    &.active { color: global.$DeepPink; }
   }
 
-  
   .login-btn {
     padding: 0.5rem 1.2rem;
     border: 1px solid global.$LightWhite;
     border-radius: 20px;
 
     &:hover {
-      background-color: global.$LightBlueHover;
+      background: global.$LightBlueHover;
       color: global.$Black;
     }
   }

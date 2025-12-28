@@ -1,15 +1,11 @@
 @use "global";
 
 .event-card {
-  position: relative;
-  background-color: global.$MediumBlue;
+  background: global.$MediumBlue;
   border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.3s ease;
 
-  &:hover {
-    transform: translateY(-5px);
-  }
+  &:hover { transform: translateY(-5px); }
 
   .event-image {
     width: 100%;
@@ -37,26 +33,18 @@
   color: global.$White;
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
-  font-style: normal;
-
-  svg {
-    flex-shrink: 0;
-  }
 }
 
 .details-link {
   display: inline-block;
   margin-top: 0.8rem;
   padding: 0.5rem 1rem;
-  background-color: global.$DeepPink;
+  background: global.$DeepPink;
   color: global.$White;
   font-size: 0.85rem;
   font-weight: global.$SemiBold;
   border-radius: 20px;
   text-decoration: none;
-  transition: background-color 0.3s ease;
 
-  &:hover {
-    background-color: global.$Pink;
-  }
+  &:hover { background: global.$Pink; }
 }

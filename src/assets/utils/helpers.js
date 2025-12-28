@@ -1,34 +1,23 @@
 
 
-export const convertDate = (dateString) => {
-    return dateString.split("-").reverse().join(".");
-};
+const PLACEHOLDER = "https://placehold.co/600x400?text=Billettlyst";
 
 
+export function formatDate(date) {
+    if (!date) return "";
+    return date.split("-").reverse().join(".");
+}
 
 
-export const choseEventPhoto = (event, minWidth, maxWidth, ratio = "16_9") => {
-    const validTypes = ["jpg", "jpeg", "png", "webp"];
+export function getImage(item, minW = 300, maxW = 800) {
+    if (!item?.images) return PLACEHOLDER;
     
-    if (!("images" in event)) {
-        return "https://placehold.co/600x400?text=Billettlyst";
-    }
-    
-    const chosenImage = event.images.find((img) => 
-        img.ratio === ratio && 
-        (img.width <= maxWidth && img.width >= minWidth)
+    const img = item.images.find(i => 
+        i.ratio === "16_9" && i.width >= minW && i.width <= maxW
     );
     
-    if (!chosenImage || !("url" in chosenImage)) {
-        return "https://placehold.co/600x400?text=Billettlyst";
-    }
-    
-    const urlParts = chosenImage.url.split(".");
-    
-    if (!validTypes.includes(urlParts.pop())) {
-        return "https://placehold.co/600x400?text=Billettlyst";
-    }
-    
-    return chosenImage.url;
-};
+    return img?.url || PLACEHOLDER;
+}
 
+// datoformat fra api: dates.start.localDate (YYYY-MM-DD)
+// konverterer til norsk format (DD.MM.YYYY)

@@ -1,65 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
 
+// farger
 $White: #ffffff;
 $Black: #000000;
-$DarkGray: #4f4e53;       
-$MediumGray: #2d2d2d;    
-$LightWhite: #f5f5f7;      
-$TextGray: #86868b;       
-$DeepPink: #ff1493;       
-$DarkPink: #ff1493;       
-$Pink: #ff69b4;   
-$DarkBlueHover: #031f2b;  
-$MediumBlue: #295a6d;         
-$LightBlueHover: #87ceeb; 
-$SkyBlueHover: #87cefa;   
+$DarkGray: #4f4e53;
+$MediumGray: #2d2d2d;
+$LightWhite: #f5f5f7;
+$TextGray: #86868b;
+$DeepPink: #ff1493;
+$Pink: #ff69b4;
+$DarkBlueHover: #031f2b;
+$MediumBlue: #295a6d;
+$LightBlueHover: #87ceeb;
+
+// font
 $Exo2: "Exo 2", sans-serif;
 $Bold: 700;
 $SemiBold: 600;
-$Regular: 400;
-$Light: 300;
-$text-m: 1.2rem;
 
-// globale størrelser  og og padding
+// layout
 $page-width: 1380px;
-$pad-left: 2rem;
-$pad-right: 2rem;
-$pad-top: 3rem;
-$pad-bottom: 3rem;
 
-@mixin flex-display($direction, $wrap: wrap, $primary-axis: flex-start, $secondary-axis: flex-start, $gap: 0) {
+// enkel flex mixin
+@mixin flex($dir: row, $gap: 1rem) {
     display: flex;
-    flex-direction: $direction;
-    flex-wrap: $wrap;
-    justify-content: $primary-axis;
-    align-items: $secondary-axis;
+    flex-direction: $dir;
     gap: $gap;
 }
 
-@mixin content-width ($left: $pad-left, $right: $pad-right, $max-width: $page-width) {
+// sentrert innhold med maks-bredde
+@mixin content-width() {
     margin: 0 auto;
-    padding-left: $left;
-    padding-right: $right;
-    max-width: $max-width;
-}
-
-
-@mixin rosa-tekst($color: $LightWhite) {
-    color: $color;
-    
-    &:hover {
-        color: $LightBlueHover;
-        transition: color 0.3s ease;
-    }
-}
-
-
-@mixin lys-bla-hover($original-color: $LightWhite) {
-    color: $original-color;
-    transition: color 0.3s ease, background-color 0.3s ease;
-    
-    &:hover {
-        color: $LightBlueHover;
-        cursor: pointer;
-    }
+    padding: 0 2rem;
+    max-width: $page-width;
 }

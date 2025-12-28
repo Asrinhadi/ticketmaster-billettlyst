@@ -1,36 +1,27 @@
 @use "global";
 
+// skip-link for tilgjengelighet
 .main-link {
   position: absolute;
-  top: auto;
   left: -100rem;
-  background-color: global.$MediumBlue;
+  background: global.$MediumBlue;
   color: global.$White;
   padding: 1rem;
   font-size: 1.5rem;
 
-  &:focus {
-    left: auto;
-    top: auto;
-  }
+  &:focus { left: auto; }
 }
 
 footer {
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-wrap: wrap;
-  min-height: 3rem;
+  justify-content: center;
   padding: 1rem;
-  background-color: global.$DarkBlueHover;
+  background: global.$DarkBlueHover;
 
   a {
     color: global.$Pink;
     text-decoration: none;
-
-    &:hover {
-      color: global.$LightBlueHover;
-    }
+    &:hover { color: global.$LightBlueHover; }
   }
 }
 

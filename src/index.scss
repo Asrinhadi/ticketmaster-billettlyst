@@ -3,7 +3,7 @@
 :root {
   font-family: global.$Exo2;
   line-height: 1.5;
-  font-weight: global.$Regular;
+  font-weight: 400;
   color: global.$LightWhite;
 
   font-synthesis: none;
@@ -22,14 +22,16 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: global.$DarkGray;
+  background: global.$DarkGray;
   color: global.$LightWhite;
 }
 
 a {
   font-weight: global.$SemiBold;
   text-decoration: inherit;
-  @include global.lys-bla-hover(global.$LightWhite);
+  color: global.$LightWhite;
+  
+  &:hover { color: global.$LightBlueHover; }
 }
 
 h1 {
@@ -45,15 +47,13 @@ button {
   font-size: 1em;
   font-weight: global.$SemiBold;
   font-family: inherit;
-  background-color: global.$MediumGray;
-  cursor: pointer;
+  background: global.$MediumGray;
   color: global.$LightWhite;
-  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.25s;
+  cursor: pointer;
   
   &:hover {
     color: global.$LightBlueHover;
     border-color: global.$LightBlueHover;
-    cursor: pointer;
   }
 
   &:focus,

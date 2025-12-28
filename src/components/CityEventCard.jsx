@@ -1,29 +1,30 @@
-import { convertDate, choseEventPhoto } from "../assets/utils/helpers";
+import { Link } from "react-router-dom";
+import { formatDate, getImage } from "../assets/utils/helpers";
 import "../styles/CityEventCard.scss";
 
-export default function CityEventCard({ eventData }) {
- 
-  const venue = eventData?._embedded?.venues?.[0];
-  const country = venue?.country?.name || "Ukjent land";
-  const city = venue?.city?.name || "Ukjent by";
-  const date = convertDate(eventData?.dates?.start?.localDate);
+export default function CityEventCard({ event }) {
+  const venue = event?._embedded?.venues?.[0];
+  const attractionId = event?._embedded?.attractions?.[0]?.id;
 
   return (
-    <article className="city-card">
-      <img
-        src={choseEventPhoto(eventData, 300, 800, "16_9")}
-        alt={eventData?.name || "Event"}
-      />
+    <li className="city-card">
+      <img src={getImage(event)} alt={event?.name || "Event"} />
+      
       <section className="card-info">
-        <h3>{eventData?.name || "Uten navn"}</h3>
-        <p>{country}</p>
-        <p>{city}</p>
-        <p className="date">{date}</p>
+        <h3>{event?.name || "Uten navn"}</h3>
+        <p>{venue?.country?.name || "Ukjent land"}</p>
+        <p>{venue?.city?.name || "Ukjent by"}</p>
+        <p className="date">{formatDate(event?.dates?.start?.localDate)}</p>
+        
+        {attractionId && (
+          <Link to={`/event/${attractionId}`} className="details-link">Les mer</Link>
+        )}
       </section>
-    </article>
+    </li>
   );
 }
 
 
 
-
+//(_embedded.venues[0]) fra Ticketmaster API
+// Ref: https://developer.ticketmaster.com/products-and-docs/tutorials/events-search/search_events_with_discovery_api.html
