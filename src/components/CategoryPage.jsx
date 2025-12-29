@@ -2,118 +2,144 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CATEGORIES } from "../constants/categories";
 import { getCategorySuggestions } from "../services/ticketmasterServices";
-import EventCard from "./EventCard";  
+import EventCard from "./EventCard";
 
 export default function CategoryPage() {
-  const { category } = useParams(); 
-  
-  const currentCategory = CATEGORIES.find(cat => cat.slug === category);
-  const displayName = currentCategory?.name || category;
-  const segmentId = currentCategory?.id || null;
+  const { category } = useParams();
 
-  const [suggestions, setSuggestions] = useState({
-    events: [],
-    attractions: [],
-    venues: [],
-  });
+  const currentCategory = CATEGORIES.find(cat => cat.slug === category);
+  const categoryName = currentCategory?.name || category;
+  const segmentId = currentCategory?.id;
+
+  console.log("Kategori fra URL:", category);
+  console.log("Fant kategori:", currentCategory);
+
+  const [events, setEvents] = useState([]);
+  const [attractions, setAttractions] = useState([]);
+  const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(false);
-  
   const [wishlist, setWishlist] = useState([]);
 
-  const toggleWishlist = (eventId) => {
-    const finnes = wishlist.includes(eventId);
-    if (finnes) {
-      const nyListe = wishlist.filter(id => id !== eventId);
-      setWishlist(nyListe);
-    } else {
-      setWishlist([...wishlist, eventId]);
-    }
-  };
-
   useEffect(() => {
-    async function loadSuggestions() {
+    async function hentData() {
       if (!segmentId) {
-        console.log("mangler segmentId");
+        console.log("segmentId mangler");
         return;
       }
-      
+
       setLoading(true);
-      const data = await getCategorySuggestions(segmentId);
-      setSuggestions(data);
+
+      try {
+        const data = await getCategorySuggestions(segmentId);
+
+        setEvents(data.events || []);
+        setAttractions(data.attractions || []);
+        setVenues(data.venues || []);
+      } catch (error) {
+        console.error("noe feil ved henting", error);
+      }
+
       setLoading(false);
     }
-    
-    loadSuggestions();
+
+    hentData();
   }, [segmentId]);
-  
+
+  function toggleWishlist(id) {
+    setWishlist(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(x => x !== id);
+      }
+      return [...prev, id];
+    });
+  }
+
   return (
-    <section className="category-page">
-      <header className="category-header">
-        <h1>Kategori: {displayName}</h1>
-        
+    <main className="category-page">
+      <header>
+        <h1>{categoryName}</h1>
         {segmentId && (
-          <p className="category-meta">
-            Ticketmaster segmentid <code>{segmentId}</code>
+          <p>
+            <small>
+              Ticketmaster ID <code>{segmentId}</code>
+            </small>
           </p>
         )}
       </header>
 
-      <section className="category-section">
-        <h2>Attraksjoner</h2>
-        {loading ? (
-          <p>Laster attraksjoner...</p>
-        ) : suggestions.attractions.length === 0 ? (
-          <p>Ingen attraksjoner lasta inn enda</p>
-        ) : (
-          <div className="card-grid">
-            {suggestions.attractions.map((attraction) => (
-              <EventCard
-                key={attraction.id}
-                event={attraction}
-                clickable={false}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      <section aria-labelledby="attractions-heading">
+        <h2 id="attractions-heading">Attraksjoner</h2>
 
-      <section className="category-section">
-        <h2>Arrangementer</h2>
-        {loading ? (
-          <p>Laster arrangementer...</p>
-        ) : suggestions.events.length === 0 ? (
-          <p>Ingen arrangementer er lasta inn enda</p>
-        ) : (
-          <div className="card-grid">
-            {suggestions.events.map((event) => (
-              <EventCard 
-                key={event.id} 
-                event={event} 
-                clickable={false} 
-              />
-            ))}
-          </div>
-        )}
-      </section>
+        {loading && <p>Laster attraksjoner...</p>}
 
-      <section className="category-section">
-        <h2>Spillesteder og eventsteder</h2>
-        {loading ? (
-          <p>Laster spillesteder...</p>
-        ) : suggestions.venues.length === 0 ? (
-          <p>Ingen spillesteder ennå</p>
-        ) : (
-          <ul>
-            {suggestions.venues.map((venue) => (
-              <li key={venue.id}>
-                {venue.name}
-                {venue.city?.name && `, ${venue.city.name}`}
-                {venue.country?.name && ` (${venue.country.name})`}
+        {!loading && attractions.length === 0 && (
+          <p>Ingen attraksjoner funnet</p>
+        )}
+
+        {!loading && attractions.length > 0 && (
+          <ul className="card-grid" role="list">
+            {attractions.map(attraction => (
+              <li key={attraction.id}>
+                <EventCard
+                  event={attraction}
+                  clickable={false}
+                  isInWishlist={wishlist.includes(attraction.id)}
+                  onToggleWishlist={toggleWishlist}
+                />
               </li>
             ))}
           </ul>
         )}
       </section>
-    </section>
+
+      <section aria-labelledby="events-heading">
+        <h2 id="events-heading">Arrangementer</h2>
+
+        {loading && <p>Laster arrangementer...</p>}
+
+        {!loading && events.length === 0 && (
+          <p>Ingen arrangementer funnet</p>
+        )}
+
+        {!loading && events.length > 0 && (
+          <ul className="card-grid" role="list">
+            {events.map(event => (
+              <li key={event.id}>
+                <EventCard
+                  event={event}
+                  clickable={false}
+                  isInWishlist={wishlist.includes(event.id)}
+                  onToggleWishlist={toggleWishlist}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section aria-labelledby="venues-heading">
+        <h2 id="venues-heading">Spillesteder</h2>
+
+        {loading && <p>Laster spillesteder...</p>}
+
+        {!loading && venues.length === 0 && (
+          <p>Ingen spillesteder funnet</p>
+        )}
+
+        {!loading && venues.length > 0 && (
+          <ul>
+            {venues.map(venue => (
+              <li key={venue.id}>
+                <strong>{venue.name}</strong>
+                {venue.city?.name && <span> - {venue.city.name}</span>}
+                {venue.country?.name && (
+                  <span> ({venue.country.name})</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </main>
   );
 }
