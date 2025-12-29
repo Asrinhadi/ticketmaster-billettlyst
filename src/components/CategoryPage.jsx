@@ -18,8 +18,17 @@ export default function CategoryPage() {
   });
   const [loading, setLoading] = useState(false);
   
-  
   const [wishlist, setWishlist] = useState([]);
+
+  const toggleWishlist = (eventId) => {
+    const finnes = wishlist.includes(eventId);
+    if (finnes) {
+      const nyListe = wishlist.filter(id => id !== eventId);
+      setWishlist(nyListe);
+    } else {
+      setWishlist([...wishlist, eventId]);
+    }
+  };
 
   useEffect(() => {
     async function loadSuggestions() {
