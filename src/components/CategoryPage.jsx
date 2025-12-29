@@ -84,7 +84,7 @@ export default function CategoryPage() {
                   event={attraction}
                   clickable={false}
                   isInWishlist={wishlist.includes(attraction.id)}
-                  onToggleWishlist={toggleWishlist}
+                  onToggleWishlist={() => toggleWishlist(attraction.id)}
                 />
               </li>
             ))}
@@ -109,7 +109,7 @@ export default function CategoryPage() {
                   event={event}
                   clickable={false}
                   isInWishlist={wishlist.includes(event.id)}
-                  onToggleWishlist={toggleWishlist}
+                  onToggleWishlist={() => toggleWishlist(event.id)}
                 />
               </li>
             ))}
