@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAttraction, getAttractionEvents } from "../services/ticketmasterServices";
-import { getImage, formatDate } from "../assets/utils/helpers";
-import { MapPin, Calendar, Music, Tag, ExternalLink } from "lucide-react";
+import { formatDate } from "../assets/utils/helpers";
+import { Calendar } from "lucide-react";
+import EventHeader from "./EventHeader";
 import ArtistCard from "./ArtistCard";
 import "../styles/EventPage.scss";
 
@@ -30,9 +31,9 @@ export default function EventPage() {
     if (loading) return <p className="loading">Laster...</p>;
     if (!attraction) return <p className="error">Fant ikke eventet</p>;
 
-    const genres = attraction.classifications?.[0];
     const firstEvent = events[0];
     const venue = firstEvent?._embedded?.venues?.[0];
+    const date = firstEvent?.dates?.start?.localDate;
     
     // hent artister fra alle events
     let allArtists = [];
@@ -51,48 +52,11 @@ export default function EventPage() {
 
     return (
         <main className="event-page">
-            <figure className="banner">
-                <img src={getImage(attraction, 500, 1200)} alt={attraction.name} />
-                <figcaption>
-                    <h1>{attraction.name}</h1>
-                </figcaption>
-            </figure>
-
-            <section className="event-details">
-                {genres && (
-                    <ul className="genre-tags">
-                        {genres.segment?.name && genres.segment.name !== "Undefined" && (
-                            <li><Tag size={16} /> {genres.segment.name}</li>
-                        )}
-                        {genres.genre?.name && genres.genre.name !== "Undefined" && (
-                            <li><Music size={16} /> {genres.genre.name}</li>
-                        )}
-                        {genres.subGenre?.name && genres.subGenre.name !== "Undefined" && (
-                            <li>{genres.subGenre.name}</li>
-                        )}
-                    </ul>
-                )}
-
-                {venue && (
-                    <p className="venue-info">
-                        <MapPin size={18} />
-                        <span>{venue.name}, {venue.city?.name}, {venue.country?.name}</span>
-                    </p>
-                )}
-
-                {firstEvent?.dates?.start?.localDate && (
-                    <p className="date-info">
-                        <Calendar size={18} />
-                        <span>{formatDate(firstEvent.dates.start.localDate)}</span>
-                    </p>
-                )}
-
-                {attraction.externalLinks?.homepage && (
-                    <a href={attraction.externalLinks.homepage[0].url} className="external-link">
-                        <ExternalLink size={16} /> Besøk nettside
-                    </a>
-                )}
-            </section>
+            <EventHeader 
+                attraction={attraction} 
+                venue={venue} 
+                date={date} 
+            />
 
             {events.length > 0 && (
                 <section className="tickets-section">
@@ -100,10 +64,10 @@ export default function EventPage() {
                     <ul className="ticket-list">
                         {events.map(ev => (
                             <li key={ev.id} className="ticket-item">
-                                <section className="ticket-info">
+                                <div className="ticket-info">
                                     <h3>{ev.name}</h3>
                                     <p><Calendar size={14} /> {formatDate(ev.dates.start.localDate)}</p>
-                                </section>
+                                </div>
                                 {ev.url && (
                                     <a href={ev.url} className="buy-btn">Kjøp billett</a>
                                 )}
