@@ -3,23 +3,32 @@ import { MapPin, Calendar } from 'lucide-react';
 import { getImage, formatDate } from '../assets/utils/helpers';
 import '../styles/EventCard.scss';
 
-export default function EventCard({ event }) {
+export default function EventCard({ event, clickable = true }) {
   if (!event) return null;
-
+  
   const venue = event._embedded?.venues?.[0];
   const date = event.dates?.start?.localDate;
-
+  
+  // kanskje bare legge til fallback bilde hvis null returnerer null
+  
   return (
     <article className="event-card">
-      <img src={getImage(event)} alt={event.name} className="event-image" />
+      <img 
+        src={getImage(event)} 
+        alt={event.name} 
+        className="event-image" 
+      />
       
-      <section className="card-content">
+      <div className="card-content">
         <h3 className="event-title">{event.name}</h3>
         
         {venue && (
           <p className="event-venue">
             <MapPin size={16} />
-            <span>{venue.name}{venue.city?.name && `, ${venue.city.name}`}</span>
+            <span>
+              {venue.name}
+              {venue.city?.name && `, ${venue.city.name}`}
+            </span>
           </p>
         )}
         
@@ -30,8 +39,12 @@ export default function EventCard({ event }) {
           </p>
         )}
         
-        <Link to={`/event/${event.id}`} className="details-link">Les mer</Link>
-      </section>
+        {clickable && (
+          <Link to={`/event/${event.id}`} className="details-link">
+            Les mer
+          </Link>
+        )}
+      </div>
     </article>
   );
 }
