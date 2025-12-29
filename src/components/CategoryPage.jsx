@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CATEGORIES } from "../constants/categories";
 import { getCategorySuggestions } from "../services/ticketmasterServices";
+import EventCard from "./EventCard";  
 
 export default function CategoryPage() {
   const { category } = useParams(); 
@@ -27,7 +28,7 @@ export default function CategoryPage() {
       
       setLoading(true);
       const data = await getCategorySuggestions(segmentId);
-      console.log("Hentet data for kategori:", data); 
+      //console.log("Hentet data for kategori:", data); 
       setSuggestions(data);
       setLoading(false);
     }
@@ -65,14 +66,15 @@ export default function CategoryPage() {
         ) : suggestions.events.length === 0 ? (
           <p>Ingen arrangementer er lasta inn enda</p>
         ) : (
-          <ul className="card-grid">
+          <div className="card-grid">
             {suggestions.events.map((event) => (
-              <li key={event.id}>
-                {event.name}
-                {/* kanskje legge til bilde og dato her også? */}
-              </li>
+              <EventCard 
+                key={event.id} 
+                event={event} 
+                clickable={false} 
+              />
             ))}
-          </ul>
+          </div>
         )}
       </section>
 
