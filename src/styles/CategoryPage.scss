@@ -1,0 +1,43 @@
+@use "global";
+
+.category-page {
+    min-height: 100vh;
+    
+    header {
+        background: linear-gradient(135deg, global.$MediumBlue, global.$DeepPink);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        
+        h1 {
+            @include global.content-width();
+            color: global.$White;
+            font-size: 2rem;
+        }
+    }
+    
+    section {
+        @include global.content-width();
+        padding-bottom: 2rem;
+        
+        h2 {
+            color: global.$White;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        p {
+            color: global.$TextGray;
+        }
+    }
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1.5rem;
+    list-style: none;
+    
+    li {
+        list-style: none;
+    }
+}

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { CATEGORIES } from "../constants/categories";
 import { getCategorySuggestions } from "../services/ticketmasterServices";
 import EventCard from "./EventCard";
+import VenueCard from "./VenueCard";
+import "../styles/CategoryPage.scss";
 
 export default function CategoryPage() {
   const { category } = useParams();
@@ -23,7 +25,6 @@ export default function CategoryPage() {
       }
 
       setLoading(true);
-      console.log("hva for noe data som blir henta her", categoryName);
 
       try {
         const data = await getCategorySuggestions(segmentId);
@@ -53,11 +54,11 @@ export default function CategoryPage() {
   return (
     <main className="category-page">
       <header>
-        <h1>{categoryName}</h1>
+        <h1>Kategori: {categoryName}</h1>
       </header>
 
       <section>
-        <h2>Attraksjoner</h2>
+        <h2>Attractions</h2>
         {loading ? (
           <p>Laster...</p>
         ) : attractions.length === 0 ? (
@@ -68,7 +69,6 @@ export default function CategoryPage() {
               <li key={attraction.id}>
                 <EventCard
                   event={attraction}
-                  clickable={false}
                   isInWishlist={wishlist.includes(attraction.id)}
                   onToggleWishlist={() => toggleWishlist(attraction.id)}
                 />
@@ -79,7 +79,7 @@ export default function CategoryPage() {
       </section>
 
       <section>
-        <h2>Arrangementer</h2>
+        <h2>Events</h2>
 
         {loading && <p>Laster...</p>}
 
@@ -93,7 +93,6 @@ export default function CategoryPage() {
               <li key={event.id}>
                 <EventCard
                   event={event}
-                  clickable={false}
                   isInWishlist={wishlist.includes(event.id)}
                   onToggleWishlist={() => toggleWishlist(event.id)}
                 />
@@ -104,7 +103,7 @@ export default function CategoryPage() {
       </section>
 
       <section>
-        <h2>Spillesteder</h2>
+        <h2>Venues</h2>
 
         {loading && <p>Laster...</p>}
 
@@ -112,12 +111,14 @@ export default function CategoryPage() {
           <p>Ingen spillesteder funnet</p>
         ) : (
           !loading && (
-            <ul>
+            <ul className="card-grid">
               {venues.map(venue => (
                 <li key={venue.id}>
-                  <strong>{venue.name}</strong>
-                  {venue.city?.name && ` - ${venue.city.name}`}
-                  {venue.country?.name && `, ${venue.country.name}`}
+                  <VenueCard
+                    venue={venue}
+                    isInWishlist={wishlist.includes(venue.id)}
+                    onToggleWishlist={() => toggleWishlist(venue.id)}
+                  />
                 </li>
               ))}
             </ul>
