@@ -5,69 +5,70 @@ import "../styles/EventHeader.scss";
 export default function EventHeader({ attraction, venue, date }) {
     if (!attraction) return null;
     
-    const genres = attraction.classifications?.[0];
+    // hent sjangerinfo
+    const genre = attraction.classifications?.[0];
+    const segment = genre?.segment?.name;
+    const mainGenre = genre?.genre?.name;
+    const subGenre = genre?.subGenre?.name;
+    
+    const homepage = attraction.externalLinks?.homepage?.[0]?.url;
     
     return (
-        <section className="event-header">
+        <header className="event-header">
             
-            <figure className="banner-image">
+            <section className="banner-image">
                 <img 
                     src={getImage(attraction, 500, 1200)} 
                     alt={attraction.name} 
                 />
-                <div className="overlay"></div>
+                <span className="overlay"></span>
                 
-                <figcaption className="banner-content">
+                <hgroup className="banner-content">
                     <h1>{attraction.name}</h1>
                     
-                    <div className="quick-info">
+                    <aside className="quick-info">
                         {venue && (
                             <p className="location">
                                 <MapPin size={18} />
-                                <span>
-                                    {venue.name}
-                                    {venue.city?.name && `, ${venue.city.name}`}
-                                    {venue.country?.name && `, ${venue.country.name}`}
-                                </span>
+                                {venue.name}
+                                {venue.city?.name && `, ${venue.city.name}`}
                             </p>
                         )}
                         {date && (
                             <p className="date">
                                 <Calendar size={18} />
-                                <span>{formatDate(date)}</span>
+                                {formatDate(date)}
                             </p>
                         )}
-                    </div>
-                </figcaption>
-            </figure>
+                    </aside>
+                </hgroup>
+            </section>
 
             
-            <div className="info-bar">
-                {genres && (
+            <nav className="info-bar">
+                {genre && (
                     <ul className="genre-tags">
-                        {genres.segment?.name && genres.segment.name !== "Undefined" && (
-                            <li><Tag size={16} /> {genres.segment.name}</li>
+                        {segment && segment !== "Undefined" && (
+                            <li><Tag size={16} /> {segment}</li>
                         )}
-                        {genres.genre?.name && genres.genre.name !== "Undefined" && (
-                            <li><Music size={16} /> {genres.genre.name}</li>
+                        {mainGenre && mainGenre !== "Undefined" && (
+                            <li><Music size={16} /> {mainGenre}</li>
                         )}
-                        {genres.subGenre?.name && genres.subGenre.name !== "Undefined" && (
-                            <li>{genres.subGenre.name}</li>
+                        {subGenre && subGenre !== "Undefined" && (
+                            <li>{subGenre}</li>
                         )}
                     </ul>
                 )}
 
-                {attraction.externalLinks?.homepage && (
+                {homepage && (
                     <a 
-                        href={attraction.externalLinks.homepage[0].url} 
+                        href={homepage} 
                         className="external-link"
-                        target="_blank"
-                        rel="noopener noreferrer"
                     >
                         <ExternalLink size={16} /> Besøk nettside
                     </a>
                 )}
-            </div>
-        </section>
+            </nav>
+        </header>
     );
 }
