@@ -11,7 +11,6 @@ export default function VenueCard({ venue, isInWishlist, onToggleWishlist }) {
             onToggleWishlist(venue.id);
         }
     }
-
     return (
         <article className="venue-card">
             <img 

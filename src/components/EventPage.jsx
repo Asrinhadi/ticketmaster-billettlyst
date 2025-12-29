@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAttraction, getAttractionEvents } from "../services/ticketmasterServices";
-import { formatDate } from "../assets/utils/helpers";
-import { Calendar } from "lucide-react";
 import EventHeader from "./EventHeader";
+import EventCard from "./EventCard";
 import ArtistCard from "./ArtistCard";
 import "../styles/EventPage.scss";
 
@@ -59,18 +58,12 @@ export default function EventPage() {
             />
 
             {events.length > 0 && (
-                <section className="tickets-section">
-                    <h2>Festivalpass og billetter</h2>
-                    <ul className="ticket-list">
+                <section className="events-section">
+                    <h2>Arrangementer</h2>
+                    <ul className="events-grid">
                         {events.map(ev => (
-                            <li key={ev.id} className="ticket-item">
-                                <div className="ticket-info">
-                                    <h3>{ev.name}</h3>
-                                    <p><Calendar size={14} /> {formatDate(ev.dates.start.localDate)}</p>
-                                </div>
-                                {ev.url && (
-                                    <a href={ev.url} className="buy-btn">Kjøp billett</a>
-                                )}
+                            <li key={ev.id}>
+                                <EventCard event={ev} />
                             </li>
                         ))}
                     </ul>
