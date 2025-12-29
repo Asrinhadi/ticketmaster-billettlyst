@@ -7,7 +7,6 @@ import EventCard from "./EventCard";
 export default function CategoryPage() {
   const { category } = useParams(); 
   
-  
   const currentCategory = CATEGORIES.find(cat => cat.slug === category);
   const displayName = currentCategory?.name || category;
   const segmentId = currentCategory?.id || null;
@@ -18,6 +17,9 @@ export default function CategoryPage() {
     venues: [],
   });
   const [loading, setLoading] = useState(false);
+  
+  
+  const [wishlist, setWishlist] = useState([]);
 
   useEffect(() => {
     async function loadSuggestions() {
