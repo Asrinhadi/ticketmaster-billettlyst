@@ -9,19 +9,18 @@ export default function EventCard({
   isInWishlist = false,
   onToggleWishlist
 }) {
+  
   if (!event) return null;
-
   const venue = event._embedded?.venues?.[0];
   const date = event.dates?.start?.localDate;
 
-  const handleWishlistClick = (e) => {
-    e.preventDefault(); 
+  function handleHeartClick(e) {
+    e.preventDefault(); // så vi ikke navigerer når vi trykker hjertet
+    
     if (onToggleWishlist) {
       onToggleWishlist(event.id);
     }
-  };
-// klikket på hjertet skal skal ikke starte navigasjon
-
+  }
 
   return (
     <article className="event-card">
@@ -31,15 +30,14 @@ export default function EventCard({
         className="event-image"
       />
       
-      {/* hjerteknappen i hjørnet */}
       <button 
         className={isInWishlist ? 'wishlist-btn active' : 'wishlist-btn'}
-        onClick={handleWishlistClick}
+        onClick={handleHeartClick}
       >
         <Heart size={18} />
       </button>
 
-      <section className="card-content">
+      <div className="card-content">
         <h3 className="event-title">{event.name}</h3>
         
         {venue && (
@@ -64,7 +62,7 @@ export default function EventCard({
             Les mer
           </Link>
         )}
-      </section>
+      </div>
     </article>
   );
 }
