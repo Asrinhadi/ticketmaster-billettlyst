@@ -6,7 +6,7 @@ import '../styles/EventCard.scss';
 export default function EventCard({ 
   event, 
   clickable = true,
-  inWishlist = false,
+  isInWishlist = false,
   onToggleWishlist
 }) {
   if (!event) return null;
@@ -33,7 +33,7 @@ export default function EventCard({
       
       {/* hjerteknappen i hjørnet */}
       <button 
-        className={inWishlist ? 'wishlist-btn active' : 'wishlist-btn'}
+        className={isInWishlist ? 'wishlist-btn active' : 'wishlist-btn'}
         onClick={handleWishlistClick}
       >
         <Heart size={18} />
