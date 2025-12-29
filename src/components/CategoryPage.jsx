@@ -6,13 +6,9 @@ import EventCard from "./EventCard";
 
 export default function CategoryPage() {
   const { category } = useParams();
-
   const currentCategory = CATEGORIES.find(cat => cat.slug === category);
   const categoryName = currentCategory?.name || category;
   const segmentId = currentCategory?.id;
-
-  console.log("Kategori fra URL:", category);
-  console.log("Fant kategori:", currentCategory);
 
   const [events, setEvents] = useState([]);
   const [attractions, setAttractions] = useState([]);
@@ -23,11 +19,11 @@ export default function CategoryPage() {
   useEffect(() => {
     async function hentData() {
       if (!segmentId) {
-        console.log("segmentId mangler");
         return;
       }
 
       setLoading(true);
+      console.log("hva for noe data som blir henta her", categoryName);
 
       try {
         const data = await getCategorySuggestions(segmentId);
@@ -43,7 +39,7 @@ export default function CategoryPage() {
     }
 
     hentData();
-  }, [segmentId]);
+  }, [segmentId, categoryName]);
 
   function toggleWishlist(id) {
     setWishlist(prev => {
@@ -58,26 +54,16 @@ export default function CategoryPage() {
     <main className="category-page">
       <header>
         <h1>{categoryName}</h1>
-        {segmentId && (
-          <p>
-            <small>
-              Ticketmaster ID <code>{segmentId}</code>
-            </small>
-          </p>
-        )}
       </header>
 
-      <section aria-labelledby="attractions-heading">
-        <h2 id="attractions-heading">Attraksjoner</h2>
-
-        {loading && <p>Laster attraksjoner...</p>}
-
-        {!loading && attractions.length === 0 && (
+      <section>
+        <h2>Attraksjoner</h2>
+        {loading ? (
+          <p>Laster...</p>
+        ) : attractions.length === 0 ? (
           <p>Ingen attraksjoner funnet</p>
-        )}
-
-        {!loading && attractions.length > 0 && (
-          <ul className="card-grid" role="list">
+        ) : (
+          <ul className="card-grid">
             {attractions.map(attraction => (
               <li key={attraction.id}>
                 <EventCard
@@ -92,17 +78,17 @@ export default function CategoryPage() {
         )}
       </section>
 
-      <section aria-labelledby="events-heading">
-        <h2 id="events-heading">Arrangementer</h2>
+      <section>
+        <h2>Arrangementer</h2>
 
-        {loading && <p>Laster arrangementer...</p>}
+        {loading && <p>Laster...</p>}
 
         {!loading && events.length === 0 && (
           <p>Ingen arrangementer funnet</p>
         )}
 
         {!loading && events.length > 0 && (
-          <ul className="card-grid" role="list">
+          <ul className="card-grid">
             {events.map(event => (
               <li key={event.id}>
                 <EventCard
@@ -117,27 +103,25 @@ export default function CategoryPage() {
         )}
       </section>
 
-      <section aria-labelledby="venues-heading">
-        <h2 id="venues-heading">Spillesteder</h2>
+      <section>
+        <h2>Spillesteder</h2>
 
-        {loading && <p>Laster spillesteder...</p>}
+        {loading && <p>Laster...</p>}
 
-        {!loading && venues.length === 0 && (
+        {!loading && venues.length === 0 ? (
           <p>Ingen spillesteder funnet</p>
-        )}
-
-        {!loading && venues.length > 0 && (
-          <ul>
-            {venues.map(venue => (
-              <li key={venue.id}>
-                <strong>{venue.name}</strong>
-                {venue.city?.name && <span> - {venue.city.name}</span>}
-                {venue.country?.name && (
-                  <span> ({venue.country.name})</span>
-                )}
-              </li>
-            ))}
-          </ul>
+        ) : (
+          !loading && (
+            <ul>
+              {venues.map(venue => (
+                <li key={venue.id}>
+                  <strong>{venue.name}</strong>
+                  {venue.city?.name && ` - ${venue.city.name}`}
+                  {venue.country?.name && `, ${venue.country.name}`}
+                </li>
+              ))}
+            </ul>
+          )
         )}
       </section>
     </main>
