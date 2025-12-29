@@ -7,7 +7,7 @@ import EventCard from "./EventCard";
 export default function CategoryPage() {
   const { category } = useParams(); 
   
-  // fra constantsmappen finner riktig kat 
+  
   const currentCategory = CATEGORIES.find(cat => cat.slug === category);
   const displayName = currentCategory?.name || category;
   const segmentId = currentCategory?.id || null;
@@ -22,29 +22,23 @@ export default function CategoryPage() {
   useEffect(() => {
     async function loadSuggestions() {
       if (!segmentId) {
-        console.log("mangler segmentId, skipper henting");
+        console.log("mangler segmentId");
         return;
       }
       
       setLoading(true);
       const data = await getCategorySuggestions(segmentId);
-      //console.log("Hentet data for kategori:", data); 
       setSuggestions(data);
       setLoading(false);
     }
     
     loadSuggestions();
   }, [segmentId]);
-
-  // implementer attractions og venues også
   
   return (
     <section className="category-page">
       <header className="category-header">
         <h1>Kategori: {displayName}</h1>
-        
-        {/* NBNBNBNB-->fjern denne placeholdereksten når alt er ferdig */}
-        <p>hent nødvendige info fra ticketmaster og vise det her muligens !!</p>
         
         {segmentId && (
           <p className="category-meta">
@@ -55,8 +49,21 @@ export default function CategoryPage() {
 
       <section className="category-section">
         <h2>Attraksjoner</h2>
-        {/* får fikse attractionene senere */}
-        <p>Ingen attraksjoner lasta inn enda</p>
+        {loading ? (
+          <p>Laster attraksjoner...</p>
+        ) : suggestions.attractions.length === 0 ? (
+          <p>Ingen attraksjoner lasta inn enda</p>
+        ) : (
+          <div className="card-grid">
+            {suggestions.attractions.map((attraction) => (
+              <EventCard
+                key={attraction.id}
+                event={attraction}
+                clickable={false}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="category-section">
@@ -80,8 +87,21 @@ export default function CategoryPage() {
 
       <section className="category-section">
         <h2>Spillesteder og eventsteder</h2>
-        <p>Ingen spillesteder ennå</p>
-        {/*  mappe over suggestions.venues når den er klar */}
+        {loading ? (
+          <p>Laster spillesteder...</p>
+        ) : suggestions.venues.length === 0 ? (
+          <p>Ingen spillesteder ennå</p>
+        ) : (
+          <ul>
+            {suggestions.venues.map((venue) => (
+              <li key={venue.id}>
+                {venue.name}
+                {venue.city?.name && `, ${venue.city.name}`}
+                {venue.country?.name && ` (${venue.country.name})`}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </section>
   );
