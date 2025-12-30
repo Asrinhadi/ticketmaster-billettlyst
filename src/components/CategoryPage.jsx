@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CATEGORIES } from "../constants/categories";
 import { getCategorySuggestions, getCategoryEvents, getCategoryVenues } from "../services/ticketmasterServices";
+// bruker EventCard for alt nå - events, attractions og venues
 import EventCard from "./EventCard";
-import VenueCard from "./VenueCard";
 import FilterBar from "./FilterBar";
 import "../styles/CategoryPage.scss";
 
@@ -144,10 +144,11 @@ export default function CategoryPage() {
                             <ul className="card-grid">
                                 {data.venues.map(venue => (
                                     <li key={venue.id}>
-                                        <VenueCard
-                                            venue={venue}
+                                        <EventCard
+                                            event={venue}
+                                            clickable={false}
                                             isInWishlist={wishlist.includes(venue.id)}
-                                            onToggleWishlist={() => toggleWishlist(venue.id)}
+                                            onToggleWishlist={toggleWishlist}
                                         />
                                     </li>
                                 ))}

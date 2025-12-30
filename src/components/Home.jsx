@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+// CityEventCard er en forenklet variant av EventCard, tilpasset by-seksjonen
+// viser event med bilde, navn, land, by og dato - uten wishlist/klikk-funksjonalitet
 import CityEventCard from './CityEventCard';
-import FestivalCard from './FestivalCard';
+// bruker EventCard for festivaler også nå, med showReadMore prop
+import EventCard from './EventCard';
 import { getCityEvents, getFestivals } from '../services/ticketmasterServices';
 import { CITY_NAMES } from '../constants/cityLocations';
 import { FESTIVAL_IDS } from '../constants/festivals';
@@ -36,7 +39,13 @@ export default function Home() {
                 <ul className="festival-grid">
                     {festivals.length > 0 ? (
                         festivals.map(fest => (
-                            <FestivalCard key={fest.id} festival={fest} />
+                            <li key={fest.id}>
+                                <EventCard 
+                                    event={fest} 
+                                    clickable={false}
+                                    showReadMore
+                                />
+                            </li>
                         ))
                     ) : (
                         <p>Laster festivaler...</p>

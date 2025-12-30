@@ -3,19 +3,32 @@ import { MapPin, Calendar, Heart } from 'lucide-react';
 import { getImage, formatDate } from '../assets/utils/helpers';
 import '../styles/EventCard.scss';
 
+// denne komponenten brukes til events, venues OG attractions/festivaler
+// måtte gjøre den litt smartere for å håndtere ulike datastrukturer
 export default function EventCard({ 
     event, 
     isInWishlist = false,
     onToggleWishlist,
     clickable = true,
-    showTicketLink = false
+    showTicketLink = false,
+    showReadMore = false
 }) {
     if (!event) return null;
     
-    const venue = event._embedded?.venues?.[0];
-    const date = event.dates?.start?.localDate;
+    // venue-data ligger på ulike steder avhengig av type
+    // events har _embedded.venues, mens venues ER venue-objektet
+    let venue = null;
+    let date = null;
 
-   
+    if (event.type === 'venue') {
+        // hvis det er en venue så er hele objektet venue-info
+        venue = event;
+    } else {
+        // ellers prøver vi å hente fra _embedded
+        venue = event._embedded?.venues?.[0];
+        date = event.dates?.start?.localDate;
+    }
+
     const showHeart = typeof onToggleWishlist === 'function';
 
     function handleHeartClick(e) {
@@ -27,7 +40,24 @@ export default function EventCard({
         }
     }
 
-    
+    // bygger location-tekst basert på hva vi har
+    function getLocationText() {
+        if (!venue) return null;
+        
+        // for venues viser vi bare by, for events viser vi venue + by
+        if (event.type === 'venue') {
+            return venue.city?.name || null;
+        }
+        
+        let text = venue.name || '';
+        if (venue.city?.name) {
+            text += text ? `, ${venue.city.name}` : venue.city.name;
+        }
+        return text || null;
+    }
+
+    const locationText = getLocationText();
+
     const cardContent = (
         <>
             <img 
@@ -48,13 +78,10 @@ export default function EventCard({
             <div className="card-content">
                 <h3 className="event-title">{event.name}</h3>
                 
-                {venue && (
+                {locationText && (
                     <p className="event-venue">
                         <MapPin size={14} />
-                        <span>
-                            {venue.name}
-                            {venue.city?.name && `, ${venue.city.name}`}
-                        </span>
+                        <span>{locationText}</span>
                     </p>
                 )}
                 
@@ -75,6 +102,12 @@ export default function EventCard({
                     >
                         Kjøp billett
                     </a>
+                )}
+
+                {showReadMore && (
+                    <Link to={`/event/${event.id}`} className="read-more-btn">
+                        Les mer
+                    </Link>
                 )}
             </div>
         </>
