@@ -9,6 +9,10 @@
     height: 400px;
     overflow: hidden;
     
+    // gjør at banneret går helt ut til kantene
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    
     img {
         width: 100%;
         height: 100%;
@@ -48,6 +52,12 @@
         gap: 0.5rem;
         color: global.$White;
         font-size: 1.1rem;
+    }
+    
+    .status {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
     }
 }
 

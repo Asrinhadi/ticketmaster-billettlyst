@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { CATEGORIES } from "../constants/categories";
-import { getCategorySuggestions } from "../services/ticketmasterServices";
+import { getCategorySuggestions, getCategoryEvents, getCategoryVenues } from "../services/ticketmasterServices";
 import EventCard from "./EventCard";
 import VenueCard from "./VenueCard";
 import FilterBar from "./FilterBar";
@@ -17,22 +17,32 @@ export default function CategoryPage() {
 
     const [data, setData] = useState({ events: [], attractions: [], venues: [] });
     const [loading, setLoading] = useState(true);
-    const [filterQuery, setFilterQuery] = useState("");
+    const [filterParams, setFilterParams] = useState({}); // endret til objekt
     const [wishlist, setWishlist] = useState([]);
 
     useEffect(() => {
         if (!segmentId) return;
         
         hentData();
-    }, [segmentId, filterQuery]);
+    }, [segmentId, filterParams]);
 
     async function hentData() {
         setLoading(true);
         
         try {
-            const result = await getCategorySuggestions(segmentId, filterQuery);
-            //console.log("hentet fra API:", result);
-            setData(result);
+            // henter events og venues med skikkelig filtrering
+            // og attractions fra suggest (de er ikke lokasjonsbaserte)
+            const [events, venues, suggestData] = await Promise.all([
+                getCategoryEvents(segmentId, filterParams),
+                getCategoryVenues(filterParams),
+                getCategorySuggestions(segmentId) // kun for attractions
+            ]);
+
+            setData({
+                events: events,
+                attractions: suggestData.attractions,
+                venues: venues
+            });
         } catch (error) {
             console.log(error); 
         } finally {
@@ -40,15 +50,8 @@ export default function CategoryPage() {
         }
     }
 
-    async function handleFilter(query) {
-        setLoading(true);
-
-        if (query === filterQuery) {
-            await hentData();
-            return;
-        }
-
-        setFilterQuery(query);
+    function handleFilter(newFilterParams) {
+        setFilterParams(newFilterParams);
     }
 
     // fikser wishlist her må man bruke prev for å få riktig state

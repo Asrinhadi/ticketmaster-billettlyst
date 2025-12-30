@@ -1,8 +1,16 @@
 import { getImage, formatDate } from "../assets/utils/helpers";
-import { MapPin, Calendar, Music, Tag, ExternalLink } from "lucide-react";
+import { MapPin, Calendar, Music, Tag, ExternalLink, Info } from "lucide-react";
 import "../styles/EventHeader.scss";
 
-export default function EventHeader({ attraction, venue, date }) {
+export default function EventHeader({ 
+    attraction, 
+    venue, 
+    date, 
+    time, 
+    city, 
+    country, 
+    statusCode 
+}) {
     if (!attraction) return null;
     
     // hent sjangerinfo
@@ -31,13 +39,21 @@ export default function EventHeader({ attraction, venue, date }) {
                             <p className="location">
                                 <MapPin size={18} />
                                 {venue.name}
-                                {venue.city?.name && `, ${venue.city.name}`}
+                                {city && `, ${city}`}
+                                {country && `, ${country}`}
                             </p>
                         )}
                         {date && (
                             <p className="date">
                                 <Calendar size={18} />
                                 {formatDate(date)}
+                                {time && ` kl. ${time}`}
+                            </p>
+                        )}
+                        {statusCode && (
+                            <p className="status">
+                                <Info size={18} />
+                                Status: {statusCode}
                             </p>
                         )}
                     </aside>
