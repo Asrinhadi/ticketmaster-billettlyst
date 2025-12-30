@@ -63,7 +63,11 @@ export default function EventPage() {
                     <ul className="events-grid">
                         {events.map(ev => (
                             <li key={ev.id}>
-                                <EventCard event={ev} />
+                                <EventCard 
+                                    event={ev} 
+                                    clickable={false}
+                                    showTicketLink
+                                />
                             </li>
                         ))}
                     </ul>

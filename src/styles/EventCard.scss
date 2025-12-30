@@ -65,3 +65,20 @@
     font-size: 0.85rem;
     margin-bottom: 0.3rem;
 }
+
+.buy-btn {
+    display: inline-block;
+    margin-top: 0.8rem;
+    padding: 0.5rem 1rem;
+    background: global.$DeepPink;
+    color: global.$White;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: global.$SemiBold;
+    transition: background 0.2s;
+
+    &:hover {
+        background: darken(global.$DeepPink, 10%);
+    }
+}

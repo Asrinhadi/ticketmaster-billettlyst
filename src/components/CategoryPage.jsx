@@ -4,127 +4,128 @@ import { CATEGORIES } from "../constants/categories";
 import { getCategorySuggestions } from "../services/ticketmasterServices";
 import EventCard from "./EventCard";
 import VenueCard from "./VenueCard";
+import FilterBar from "./FilterBar";
 import "../styles/CategoryPage.scss";
 
 export default function CategoryPage() {
-  const { category } = useParams();
-  const currentCategory = CATEGORIES.find(cat => cat.slug === category);
-  const categoryName = currentCategory?.name || category;
-  const segmentId = currentCategory?.id;
+    const { category } = useParams();
+    
+    
+    const currentCategory = CATEGORIES.find(cat => cat.slug === category);
+    const categoryName = currentCategory?.name || category;
+    const segmentId = currentCategory?.id;
 
-  const [events, setEvents] = useState([]);
-  const [attractions, setAttractions] = useState([]);
-  const [venues, setVenues] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [wishlist, setWishlist] = useState([]);
+    const [data, setData] = useState({ events: [], attractions: [], venues: [] });
+    const [loading, setLoading] = useState(true);
+    const [filterQuery, setFilterQuery] = useState("");
+    const [wishlist, setWishlist] = useState([]);
 
-  useEffect(() => {
+    useEffect(() => {
+        if (!segmentId) return;
+        
+        hentData();
+    }, [segmentId, filterQuery]);
+
     async function hentData() {
-      if (!segmentId) {
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const data = await getCategorySuggestions(segmentId);
-
-        setEvents(data.events || []);
-        setAttractions(data.attractions || []);
-        setVenues(data.venues || []);
-      } catch (error) {
-        console.error("noe feil ved henting", error);
-      }
-
-      setLoading(false);
+        setLoading(true);
+        
+        try {
+            const result = await getCategorySuggestions(segmentId, filterQuery);
+            console.log("hentet fra API:", result);
+            setData(result);
+        } catch (error) {
+            console.log(error); 
+        } finally {
+            setLoading(false); 
+        }
     }
 
-    hentData();
-  }, [segmentId, categoryName]);
+    // fikser wishlist her må man bruke prev for å få riktig state
+    // forklaringen hersånn https://react.dev/learn/state-as-a-snapshot
+    // og her   https://react.dev/learn/queueing-a-series-of-state-updates
+    function toggleWishlist(id) {
+        setWishlist(prev => 
+            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+        );
+    }
 
-  function toggleWishlist(id) {
-    setWishlist(prev => {
-      if (prev.includes(id)) {
-        return prev.filter(x => x !== id);
-      }
-      return [...prev, id];
-    });
-  }
+    return (
+        <main className="category-page">
+            <header>
+                <h1>Kategori: {categoryName}</h1>
+            </header>
 
-  return (
-    <main className="category-page">
-      <header>
-        <h1>Kategori: {categoryName}</h1>
-      </header>
-
-      <section>
-        <h2>Attractions</h2>
-        {loading ? (
-          <p>Laster...</p>
-        ) : attractions.length === 0 ? (
-          <p>Ingen attraksjoner funnet</p>
-        ) : (
-          <ul className="card-grid">
-            {attractions.map(attraction => (
-              <li key={attraction.id}>
-                <EventCard
-                  event={attraction}
-                  isInWishlist={wishlist.includes(attraction.id)}
-                  onToggleWishlist={() => toggleWishlist(attraction.id)}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h2>Events</h2>
-
-        {loading && <p>Laster...</p>}
-
-        {!loading && events.length === 0 && (
-          <p>Ingen arrangementer funnet</p>
-        )}
-
-        {!loading && events.length > 0 && (
-          <ul className="card-grid">
-            {events.map(event => (
-              <li key={event.id}>
-                <EventCard
-                  event={event}
-                  isInWishlist={wishlist.includes(event.id)}
-                  onToggleWishlist={() => toggleWishlist(event.id)}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h2>Venues</h2>
-
-        {loading && <p>Laster...</p>}
-
-        {!loading && venues.length === 0 ? (
-          <p>Ingen spillesteder funnet</p>
-        ) : (
-          !loading && (
-            <ul className="card-grid">
-              {venues.map(venue => (
-                <li key={venue.id}>
-                  <VenueCard
-                    venue={venue}
-                    isInWishlist={wishlist.includes(venue.id)}
-                    onToggleWishlist={() => toggleWishlist(venue.id)}
-                  />
-                </li>
-              ))}
-            </ul>
-          )
-        )}
-      </section>
-    </main>
-  );
+            <FilterBar 
+                onFilter={setFilterQuery} 
+                setLoading={setLoading}
+            />
+            <section>
+                <h2>Attractions</h2>
+                {loading ? (
+                    <p>Laster...</p>
+                ) : data.attractions.length === 0 ? (
+                    <p>Ingen attraksjoner funnet</p>
+                ) : (
+                    <ul className="card-grid">
+                        {data.attractions.map(attraction => (
+                            <li key={attraction.id}>
+                                <EventCard
+                                    event={attraction}
+                                    clickable={false}
+                                    isInWishlist={wishlist.includes(attraction.id)}
+                                    onToggleWishlist={toggleWishlist}
+                                />
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </section>
+            
+            <section>
+                <h2>Events</h2>
+                {loading && <p>Laster events...</p>}
+                
+                {!loading && data.events.length === 0 && (
+                    <p>Fant ingen arrangementer i denne kategorien</p>
+                )}
+                
+                {!loading && data.events.length > 0 && (
+                    <ul className="card-grid">
+                        {data.events.map(event => (
+                            <li key={event.id}>
+                                <EventCard
+                                    event={event}
+                                    clickable={false}
+                                    isInWishlist={wishlist.includes(event.id)}
+                                    onToggleWishlist={toggleWishlist}
+                                />
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </section>
+            <section>
+                <h2>Spillesteder</h2>
+                {loading ? <p>Laster...</p> : (
+                    <>
+                        {data.venues.length === 0 ? (
+                            <p>Ingen spillesteder</p>
+                        ) : (
+                            <ul className="card-grid">
+                                {data.venues.map(venue => (
+                                    <li key={venue.id}>
+                                        <VenueCard
+                                            venue={venue}
+                                            isInWishlist={wishlist.includes(venue.id)}
+                                            onToggleWishlist={() => toggleWishlist(venue.id)}
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </>
+                )}
+            </section>
+        </main>
+    );
 }
