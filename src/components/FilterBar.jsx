@@ -13,7 +13,7 @@ export default function FilterBar({ onFilter, setLoading }) {
     
     const formData = new FormData(e.target);
     
-    // bygger et objekt med filterparams i stedet for query-streng
+    // bygger et objekt med filterparams i stedet for querystreng
     const filterParams = {};
     
     if (formData.get('search')) {
@@ -45,12 +45,12 @@ export default function FilterBar({ onFilter, setLoading }) {
     setSelectedCountry('');
     setSelectedCity('');
     if (setLoading) setLoading(true);
-    onFilter({}); // sender tomt objekt for å nullstille
+    onFilter({}); 
   }
 
   function handleCountryChange(e) {
     setSelectedCountry(e.target.value);
-    setSelectedCity(''); // reset by når land endres
+    setSelectedCity(''); 
   }
 
   const availableCities = CITIES.filter(city => city.code === selectedCountry);
@@ -107,7 +107,7 @@ export default function FilterBar({ onFilter, setLoading }) {
         </select>
       </label>
 
-      {/* radius og enhet kun aktive hvis by er valgt */}
+     
       <label>
         Radius
         <input

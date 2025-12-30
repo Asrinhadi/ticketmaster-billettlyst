@@ -1,3 +1,4 @@
+
 import { Link } from 'react-router-dom';
 import { getImage } from '../assets/utils/helpers';
 import '../styles/FestivalCard.scss';

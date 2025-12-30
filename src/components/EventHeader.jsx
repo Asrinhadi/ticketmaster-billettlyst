@@ -9,7 +9,8 @@ export default function EventHeader({
     time, 
     city, 
     country, 
-    statusCode 
+    statusCode,
+    info 
 }) {
     if (!attraction) return null;
     
@@ -85,6 +86,10 @@ export default function EventHeader({
                     </a>
                 )}
             </nav>
+
+            {info && (
+                <p className="event-info">{info}</p>
+            )}
         </header>
     );
 }

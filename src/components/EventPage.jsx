@@ -12,7 +12,6 @@ export default function EventPage() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [wishlist, setWishlist] = useState([]);
 
     useEffect(() => {
         async function loadData() {
@@ -23,11 +22,12 @@ export default function EventPage() {
                 const attr = await getAttraction(id);
                 setAttraction(attr);
                 
+                // hent alle events for denne attraksjonen
                 const evs = await getAttractionEvents(id);
                 setEvents(evs);
             } catch (err) {
-                console.error('Feil ved lasting:', err);
-                setError('Kunne ikke laste data');
+                console.error('no feil ved lasting', err);
+                setError('kunne ikke laste data');
             } finally {
                 setLoading(false);
             }
@@ -36,9 +36,9 @@ export default function EventPage() {
         loadData();
     }, [id]);
 
-    // hent unike artister fra alle events (bruker Map for å unngå duplikater)
+    
     function getUniqueArtists() {
-        const artistMap = new Map();
+        const artistMap = new Map(); 
         
         events.forEach(event => {
             const attractions = event._embedded?.attractions || [];
@@ -60,21 +60,9 @@ export default function EventPage() {
     const venue = firstEvent?._embedded?.venues?.[0];
     const date = firstEvent?.dates?.start?.localDate;
     const time = firstEvent?.dates?.start?.localTime;
-    const city = venue?.city?.name;
-    const country = venue?.country?.name;
     const statusCode = firstEvent?.dates?.status?.code;
     
-    // prøver å finne beskrivelse
-    const description = firstEvent?.info || firstEvent?.pleaseNote || firstEvent?.description;
-    
     const otherArtists = getUniqueArtists();
-
-    // toggle wishlist - legger til eller fjerner fra favoritter
-    function toggleWishlist(id) {
-        setWishlist(prev => 
-            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-        );
-    }
 
     return (
         <main className="event-page">
@@ -83,40 +71,13 @@ export default function EventPage() {
                 venue={venue} 
                 date={date}
                 time={time}
-                city={city}
-                country={country}
                 statusCode={statusCode}
+                info={firstEvent?.info}
             />
 
-            {/* Detaljer om event */}
-            <section className="event-details">
-                <h2>Detaljer</h2>
-                <ul className="details-list">
-                    <li>
-                        <strong>Sted:</strong> {venue?.name || "Ukjent sted"}
-                        {city && `, ${city}`}
-                        {country && `, ${country}`}
-                    </li>
-                    <li>
-                        <strong>Dato:</strong> {date || "Ukjent dato"}
-                        {time && ` kl. ${time}`}
-                    </li>
-                    <li>
-                        <strong>Status:</strong> {statusCode || "Ikke oppgitt"}
-                    </li>
-                </ul>
-                
-                {description && (
-                    <p className="event-description">
-                        <strong>Info:</strong> {description}
-                    </p>
-                )}
-            </section>
-
-            {/* Festivalpass - alle events */}
             {events.length > 0 && (
                 <section className="events-section">
-                    <h2>Festivalpass ({events.length})</h2>
+                    <h2>Arrangementer ({events.length})</h2>
                     <ul className="events-grid">
                         {events.map(ev => (
                             <li key={ev.id}>
@@ -124,8 +85,6 @@ export default function EventPage() {
                                     event={ev} 
                                     clickable={false}
                                     showTicketLink
-                                    isInWishlist={wishlist.includes(ev.id)}
-                                    onToggleWishlist={toggleWishlist}
                                 />
                             </li>
                         ))}
@@ -133,10 +92,9 @@ export default function EventPage() {
                 </section>
             )}
 
-            {/* Andre artister */}
             {otherArtists.length > 0 && (
                 <section className="artists-section">
-                    <h2>Artister ({otherArtists.length})</h2>
+                    <h2>Andre artister</h2>
                     <ul className="artist-list">
                         {otherArtists.map(artist => (
                             <ArtistCard key={artist.id} artist={artist} />
