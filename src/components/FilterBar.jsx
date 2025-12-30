@@ -1,41 +1,40 @@
 import { useState } from 'react';
+import { COUNTRIES } from '../constants/countryCodes';
+import { CITIES } from '../constants/cityLocations';
 import '../styles/FilterBar.scss';
-
-// Husk å flytte denne denne her til constants fil senere
-const countries = [
-    { code: '', name: 'Velg land' },
-    { code: 'NO', name: 'Norge' },
-    { code: 'SE', name: 'Sverige' },
-    { code: 'DK', name: 'Danmark' },
-    { code: 'US', name: 'USA' },
-    { code: 'GB', name: 'Storbritannia' },
-];
 
 export default function FilterBar({ onFilter, setLoading }) {
     const [selectedCountry, setSelectedCountry] = useState('');
 
+
+    const filteredCities = CITIES.filter(city => city.code === selectedCountry);
+
     function handleSubmit(e) {
         e.preventDefault();
-        setLoading?.(true); 
-        
+        setLoading?.(true);
+
         const formData = new FormData(e.target);
         let query = "";
-        
+
         if (formData.get('search')) {
             query += "&keyword=" + formData.get('search');
         }
         if (formData.get('country')) {
             query += "&countryCode=" + formData.get('country');
         }
+        if (formData.get('city')) {
+            query += "&geoPoint=" + formData.get('city');
+        }
         if (formData.get('date')) {
             query += "&startDateTime=" + formData.get('date') + "T00:00:00Z";
         }
-        
-        console.log("queryen", query);
+
+        console.log("query", query);
         onFilter(query);
     }
-//NBNBNBNB FIKSER SENERE søkefeltet og dato er der fortsatt ... SE DEvtols
-    function handleReset() {
+
+    function handleReset(e) {
+        e.target.form.reset(); 
         setSelectedCountry('');
         setLoading?.(true);
         onFilter("");
@@ -45,24 +44,37 @@ export default function FilterBar({ onFilter, setLoading }) {
         <form className="filter-bar" onSubmit={handleSubmit}>
             <label>
                 Søk
-                <input 
-                    type="text" 
+                <input
+                    type="text"
                     name="search"
                     placeholder="Artist, event..."
                 />
             </label>
 
-            {/* landene dropdown */}
             <label>
                 Land
-                <select 
+                <select
                     name="country"
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
                 >
-                    {countries.map(c => (
+                    <option value="">Velg land</option>
+                    {COUNTRIES.map(c => (
                         <option key={c.code} value={c.code}>
                             {c.name}
+                        </option>
+                    ))}
+                </select>
+            </label>
+            <label>
+                By
+                <select name="city" disabled={!selectedCountry}>
+                    <option value="">
+                        {selectedCountry ? "Velg by" : "Velg land først"}
+                    </option>
+                    {filteredCities.map(city => (
+                        <option key={city.name} value={`${city.lat},${city.long}`}>
+                            {city.name}
                         </option>
                     ))}
                 </select>
