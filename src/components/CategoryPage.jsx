@@ -17,7 +17,7 @@ export default function CategoryPage() {
 
     const [data, setData] = useState({ events: [], attractions: [], venues: [] });
     const [loading, setLoading] = useState(true);
-    const [filterParams, setFilterParams] = useState({}); // endret til objekt
+    const [filterParams, setFilterParams] = useState({}); 
     const [wishlist, setWishlist] = useState([]);
 
     useEffect(() => {
@@ -26,16 +26,32 @@ export default function CategoryPage() {
         hentData();
     }, [segmentId, filterParams]);
 
+    // bygger query streng for suggestendepunktet
+    function buildSuggestQuery() {
+        let query = '';
+        
+        if (filterParams.keyword) {
+            query += `&keyword=${filterParams.keyword}`;
+        }
+        if (filterParams.countryCode) {
+            query += `&countryCode=${filterParams.countryCode}`;
+        }
+      
+        
+        return query;
+    }
+
     async function hentData() {
         setLoading(true);
         
         try {
-            // henter events og venues med skikkelig filtrering
-            // og attractions fra suggest (de er ikke lokasjonsbaserte)
+            
+            const suggestQuery = buildSuggestQuery();
+            
             const [events, venues, suggestData] = await Promise.all([
                 getCategoryEvents(segmentId, filterParams),
                 getCategoryVenues(filterParams),
-                getCategorySuggestions(segmentId) // kun for attractions
+                getCategorySuggestions(segmentId, suggestQuery)
             ]);
 
             setData({
