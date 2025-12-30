@@ -3,8 +3,6 @@ import { MapPin, Calendar, Heart } from 'lucide-react';
 import { getImage, formatDate } from '../assets/utils/helpers';
 import '../styles/EventCard.scss';
 
-// denne komponenten brukes til events, venues OG attractions/festivaler
-// måtte gjøre den litt smartere for å håndtere ulike datastrukturer
 export default function EventCard({ 
     event, 
     isInWishlist = false,
@@ -14,17 +12,14 @@ export default function EventCard({
     showReadMore = false
 }) {
     if (!event) return null;
-    
-    // venue-data ligger på ulike steder avhengig av type
-    // events har _embedded.venues, mens venues ER venue-objektet
     let venue = null;
     let date = null;
 
     if (event.type === 'venue') {
-        // hvis det er en venue så er hele objektet venue-info
+      
         venue = event;
     } else {
-        // ellers prøver vi å hente fra _embedded
+       
         venue = event._embedded?.venues?.[0];
         date = event.dates?.start?.localDate;
     }
@@ -39,12 +34,9 @@ export default function EventCard({
             onToggleWishlist(event.id);
         }
     }
-
-    // bygger location-tekst basert på hva vi har
     function getLocationText() {
         if (!venue) return null;
         
-        // for venues viser vi bare by, for events viser vi venue + by
         if (event.type === 'venue') {
             return venue.city?.name || null;
         }

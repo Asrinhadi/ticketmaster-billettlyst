@@ -36,14 +36,18 @@ export default function EventHeader({
                     <h1>{attraction.name}</h1>
                     
                     <aside className="quick-info">
-                        {venue && (
-                            <p className="location">
-                                <MapPin size={18} />
-                                {venue.name}
-                                {city && `, ${city}`}
-                                {country && `, ${country}`}
-                            </p>
-                        )}
+                        <p className="location">
+                            <MapPin size={18} />
+                            {venue?.name || city || country ? (
+                                <>
+                                    {venue?.name}
+                                    {city && `, ${city}`}
+                                    {country && `, ${country}`}
+                                </>
+                            ) : (
+                                "Sted ikke oppgitt"
+                            )}
+                        </p>
                         {date && (
                             <p className="date">
                                 <Calendar size={18} />

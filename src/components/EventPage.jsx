@@ -62,6 +62,15 @@ export default function EventPage() {
     const time = firstEvent?.dates?.start?.localTime;
     const statusCode = firstEvent?.dates?.status?.code;
     
+    // henter by og land fra venue
+    const city = venue?.city?.name;
+    const country = venue?.country?.name;
+    
+    // ekstra info fra api - pleaseNote har ofte viktig info om aldersgrense osv
+    const pleaseNote = firstEvent?.pleaseNote;
+    // priceRanges viser min/max pris hvis tilgjengelig
+    const priceRange = firstEvent?.priceRanges?.[0];
+    
     const otherArtists = getUniqueArtists();
 
     return (
@@ -71,13 +80,31 @@ export default function EventPage() {
                 venue={venue} 
                 date={date}
                 time={time}
+                city={city}
+                country={country}
                 statusCode={statusCode}
                 info={firstEvent?.info}
             />
 
-            {events.length > 0 && (
-                <section className="events-section">
-                    <h2>Arrangementer ({events.length})</h2>
+            {/* ekstra detaljer som ikke passer i header */}
+            {(pleaseNote || priceRange) && (
+                <section className="extra-info">
+                    {priceRange && (
+                        <p className="price-info">
+                            <strong>Pris:</strong> {priceRange.min} - {priceRange.max} {priceRange.currency}
+                        </p>
+                    )}
+                    {pleaseNote && (
+                        <p className="please-note">
+                            <strong>Obs:</strong> {pleaseNote}
+                        </p>
+                    )}
+                </section>
+            )}
+
+            <section className="events-section">
+                <h2>Festivalpass {events.length > 0 && `(${events.length})`}</h2>
+                {events.length > 0 ? (
                     <ul className="events-grid">
                         {events.map(ev => (
                             <li key={ev.id}>
@@ -89,8 +116,10 @@ export default function EventPage() {
                             </li>
                         ))}
                     </ul>
-                </section>
-            )}
+                ) : (
+                    <p>Ingen festivalpass funnet</p>
+                )}
+            </section>
 
             {otherArtists.length > 0 && (
                 <section className="artists-section">

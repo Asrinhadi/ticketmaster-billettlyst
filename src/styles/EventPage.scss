@@ -12,6 +12,27 @@
     font-size: 1.2rem;
 }
 
+
+.extra-info {
+    @include global.content-width();
+    padding: 1.5rem 0;
+    
+    p {
+        color: global.$White;
+        margin-bottom: 0.8rem;
+        line-height: 1.5;
+    }
+    
+    .price-info {
+        color: global.$Pink;
+    }
+    
+    .please-note {
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+}
+
 .events-section,
 .artists-section {
     @include global.content-width();
