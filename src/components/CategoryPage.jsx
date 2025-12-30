@@ -31,13 +31,24 @@ export default function CategoryPage() {
         
         try {
             const result = await getCategorySuggestions(segmentId, filterQuery);
-            console.log("hentet fra API:", result);
+            //console.log("hentet fra API:", result);
             setData(result);
         } catch (error) {
             console.log(error); 
         } finally {
             setLoading(false); 
         }
+    }
+
+    async function handleFilter(query) {
+        setLoading(true);
+
+        if (query === filterQuery) {
+            await hentData();
+            return;
+        }
+
+        setFilterQuery(query);
     }
 
     // fikser wishlist her må man bruke prev for å få riktig state
@@ -56,7 +67,7 @@ export default function CategoryPage() {
             </header>
 
             <FilterBar 
-                onFilter={setFilterQuery} 
+                onFilter={handleFilter} 
                 setLoading={setLoading}
             />
             <section>
