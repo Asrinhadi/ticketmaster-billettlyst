@@ -34,7 +34,7 @@ export default function FilterBar({ onFilter, setLoading }) {
         console.log("queryen", query);
         onFilter(query);
     }
-
+//NBNBNBNB FIKSER SENERE søkefeltet og dato er der fortsatt ... SE DEvtols
     function handleReset() {
         setSelectedCountry('');
         setLoading?.(true);
