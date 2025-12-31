@@ -3,7 +3,10 @@ import { getAllEvents, getAllUsers, urlFor } from "../services/sanityServices";
 import "../styles/Dashboard.scss";
 
 export default function Dashboard() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); //huske på å sette den til FALSE............
+  // FOR TESTING: sett til true for å slippe rett inn på dashboard uten innlogging.
+  // VIKTIG: når du skal ha "ekte" innlogging igjen, bytt tilbake til false.
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
@@ -22,7 +25,7 @@ export default function Dashboard() {
   function handleSubmit(e) {
     e.preventDefault();
     // Må jeg egentlgi legge til  ekte autentisering???
-    setIsLoggedIn(true);
+    setIsLoggedIn(true);/////// huske å forandre på denne til false igjen..................
   }
 
   function handleLogout() {
@@ -30,7 +33,7 @@ export default function Dashboard() {
     setFormValues({ email: "", password: "" });
   }
 
-  //  hent data fra Sanity
+  
   useEffect(() => {
     if (!isLoggedIn) return;
 
@@ -57,7 +60,7 @@ export default function Dashboard() {
     fetchData();
   }, [isLoggedIn]);
 
- 
+  // hvis ikke logget inn vis loginn skjemaert
   if (!isLoggedIn) {
     return (
       <main className="dashboard">

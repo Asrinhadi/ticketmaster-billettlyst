@@ -7,6 +7,25 @@ export function urlFor(source) {
   return builder.image(source);
 }
 
+
+// denne skal hente eventen uti fra apiiden
+export async function getSingleEvent(apiId) {
+  const query = `*[_type == "event" && apiId == $apiId][0]{
+    _id,
+    title,
+    category,
+    apiId,
+    image
+  }`;
+  
+  return await client.fetch(query, { apiId });
+}
+
+
+
+
+
+
 export async function getAllUsers() {
   const query = `*[_type == "user"]{
     _id,
