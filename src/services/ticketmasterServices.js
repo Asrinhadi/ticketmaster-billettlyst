@@ -109,7 +109,7 @@ export async function getCategorySuggestions(segmentId, extraQuery = "") {
     }
 }
 
-
+////////////////////////////////////SE PÅ DENN HER I MOREGEN A 
 // MÅTTE FLYTTE PÅ DENNE... SE NOATTEBE denne skal hente events med skikkelig filtrering via /v2/events
 // denne støtter latlong, radius, unit, countryCode, startDateTime osv 
 export async function getCategoryEvents(segmentId, filterParams = {}) {
