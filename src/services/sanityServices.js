@@ -24,8 +24,6 @@ export async function getSingleEvent(apiId) {
 
 
 
-
-
 export async function getAllUsers() {
   const query = `*[_type == "user"]{
     _id,
@@ -48,6 +46,29 @@ export async function getAllUsers() {
 
   return sanityClient.fetch(query);
 }
+
+
+
+// hent event med alle brukere som har den i wishlist eller kjøpt
+export async function getSanityEventWithUsers(apiId) {
+  const query = `*[_type == "event" && apiId == $apiId][0]{
+    _id,
+    title,
+    apiId,
+    category,
+
+    "wishlistUsers": *[_type == "user" && ^._id in wishlist[]._ref]{
+      _id, name, email, image
+    },
+
+    "purchaseUsers": *[_type == "user" && ^._id in previousPurchases[]._ref]{
+      _id, name, email, image
+    }
+  }`;
+
+  return sanityClient.fetch(query, { apiId });
+}
+
 
 export async function getAllEvents() {
   const query = `*[_type == "event"]{
@@ -74,3 +95,4 @@ export async function getUserByEmail(email) {
 
   return sanityClient.fetch(query, { email });
 }
+

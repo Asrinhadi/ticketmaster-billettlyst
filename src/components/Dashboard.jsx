@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { getAllEvents, getAllUsers, urlFor } from "../services/sanityServices";
 import "../styles/Dashboard.scss";
 
@@ -142,7 +143,7 @@ export default function Dashboard() {
               <ul>
                 {user.wishlist.map((wish) => (
                   <li key={wish._id}>
-                    Wishlist: {wish.title} (ID: {wish.apiId})
+                    Wishlist: <Link to={`/sanity-event/${wish.apiId}`}>{wish.title}</Link>
                   </li>
                 ))}
               </ul>
@@ -152,7 +153,7 @@ export default function Dashboard() {
               <ul>
                 {user.previousPurchases.map((purchase) => (
                   <li key={purchase._id}>
-                    Purchased: {purchase.title} (ID: {purchase.apiId})
+                    Purchased: <Link to={`/sanity-event/${purchase.apiId}`}>{purchase.title}</Link>
                   </li>
                 ))}
               </ul>
