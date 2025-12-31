@@ -1,0 +1,162 @@
+@use "global";
+
+.dashboard {
+    @include global.content-width();
+    padding: 2rem 1rem;
+    min-height: 100vh;
+
+    h1 {
+        color: global.$White;
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    h2 {
+        color: global.$White;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+// events liste
+.events-section {
+    margin-bottom: 3rem;
+    
+    .events-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .event-item {
+        background: global.$MediumGray;
+        padding: 1rem;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .event-title {
+            color: global.$White;
+            font-weight: global.$SemiBold;
+        }
+        
+        .event-category {
+            color: global.$Pink;
+            font-size: 0.85rem;
+            text-transform: capitalize;
+        }
+    }
+}
+
+// brukere
+.users-section {
+    .users-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}
+
+.user-card {
+    background: global.$MediumGray;
+    border-radius: 12px;
+    padding: 1.5rem;
+    
+    .user-header {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .user-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        
+        &.placeholder {
+            background: global.$Pink;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: global.$White;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    }
+    
+    .user-info {
+        h3 {
+            color: global.$White;
+            margin-bottom: 0.3rem;
+        }
+        
+        .user-email {
+            color: global.$White;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-stats {
+            display: flex;
+            gap: 1rem;
+            
+            span {
+                color: global.$Pink;
+                font-size: 0.85rem;
+            }
+        }
+    }
+}
+
+// brukerens events
+.user-events {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    
+    @media (max-width: 500px) {
+        grid-template-columns: 1fr;
+    }
+    
+    h4 {
+        color: global.$White;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    ul {
+        list-style: none;
+        
+        li {
+            color: global.$White;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+    
+    .wishlist h4 {
+        color: global.$Pink;
+    }
+    
+    .purchases h4 {
+        color: global.$MediumBlue;
+    }
+}
+
+.loading {
+    color: global.$White;
+    text-align: center;
+    padding: 4rem;
+}
