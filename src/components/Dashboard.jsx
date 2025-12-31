@@ -4,10 +4,8 @@ import { getAllEvents, getAllUsers, urlFor } from "../services/sanityServices";
 import "../styles/Dashboard.scss";
 
 export default function Dashboard() {
-  // FOR TESTING: sett til true for å slippe rett inn på dashboard uten innlogging.
-  // VIKTIG: når du skal ha "ekte" innlogging igjen, bytt tilbake til false.
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(true);/////// huske å forandre på denne til false igjen..................
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
@@ -26,7 +24,7 @@ export default function Dashboard() {
   function handleSubmit(e) {
     e.preventDefault();
     // Må jeg egentlgi legge til  ekte autentisering???
-    setIsLoggedIn(true);/////// huske å forandre på denne til false igjen..................
+    setIsLoggedIn(true);
   }
 
   function handleLogout() {
@@ -116,7 +114,9 @@ export default function Dashboard() {
         <ul>
           {allEvents.map((evnt) => (
             <li key={evnt._id}>
-              {evnt.title} ({evnt.category})
+              <Link to={`/dashboard/event/${evnt.apiId}`}>
+                {evnt.title} ({evnt.category})
+              </Link>
             </li>
           ))}
         </ul>
@@ -143,7 +143,7 @@ export default function Dashboard() {
               <ul>
                 {user.wishlist.map((wish) => (
                   <li key={wish._id}>
-                    Wishlist: <Link to={`/sanity-event/${wish.apiId}`}>{wish.title}</Link>
+                    Wishlist: <Link to={`/dashboard/event/${wish.apiId}`}>{wish.title}</Link>
                   </li>
                 ))}
               </ul>
@@ -153,7 +153,7 @@ export default function Dashboard() {
               <ul>
                 {user.previousPurchases.map((purchase) => (
                   <li key={purchase._id}>
-                    Purchased: <Link to={`/sanity-event/${purchase.apiId}`}>{purchase.title}</Link>
+                    Purchased: <Link to={`/dashboard/event/${purchase.apiId}`}>{purchase.title}</Link>
                   </li>
                 ))}
               </ul>
