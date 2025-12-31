@@ -3,106 +3,160 @@ import { getAllEvents, getAllUsers, urlFor } from "../services/sanityServices";
 import "../styles/Dashboard.scss";
 
 export default function Dashboard() {
-    const [events, setEvents] = useState([]);
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(true); //huske på å sette den til FALSE............
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+  });
 
-    useEffect(() => {
-        async function hentData() {
-            setLoading(true);
-            try {
-                const [eventsData, usersData] = await Promise.all([
-                    getAllEvents(),
-                    getAllUsers()
-                ]);
-                setEvents(eventsData);
-                setUsers(usersData);
-            } catch (err) {
-                console.error('Feil ved henting fra Sanity:', err);
-            } finally {
-                setLoading(false);
-            }
-        }
+  // BRAVET DATA FRA SANITY
+  const [allEvents, setAllEvents] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    // Må jeg egentlgi legge til  ekte autentisering???
+    setIsLoggedIn(true);
+  }
+
+  function handleLogout() {
+    setIsLoggedIn(false);
+    setFormValues({ email: "", password: "" });
+  }
+
+  //  hent data fra Sanity
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const [events, users] = await Promise.all([
+          getAllEvents(),
+          getAllUsers()
+        ]);
         
-        hentData();
-    }, []);
-
-    if (loading) {
-        return <p className="loading">Laster data fra Sanity...</p>;
+        setAllEvents(events);
+        setAllUsers(users);
+        
+        console.log("eventsene", events.length);
+        console.log("brukerne?", users.length);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
 
+    fetchData();
+  }, [isLoggedIn]);
+
+ 
+  if (!isLoggedIn) {
     return (
-        <main className="dashboard">
-            <h1>Dashboard</h1>
-           
-            <section className="events-section">
-                <h2>Alle Events ({events.length})</h2>
-                <ul className="events-list">
-                    {events.map(ev => (
-                        <li key={ev._id} className="event-item">
-                            <span className="event-title">{ev.title}</span>
-                            <span className="event-category">{ev.category}</span>
-                        </li>
-                    ))}
-                </ul>
-            </section>
-
-           
-            <section className="users-section">
-                <h2>Brukere ({users.length})</h2>
-                <ul className="users-list">
-                    {users.map(user => (
-                        <li key={user._id} className="user-card">
-                            <div className="user-header">
-                                {user.image ? (
-                                    <img 
-                                        src={urlFor(user.image).width(80).height(80).url()} 
-                                        alt={user.name}
-                                        className="user-image"
-                                    />
-                                ) : (
-                                    <div className="user-image placeholder">
-                                        {user.name?.charAt(0)}
-                                    </div>
-                                )}
-                                <div className="user-info">
-                                    <h3>{user.name}</h3>
-                                    <p className="user-email">{user.email}</p>
-                                    <p className="user-stats">
-                                        <span>Ønskeliste: {user.wishlist?.length || 0}</span>
-                                        <span>Kjøpt: {user.previousPurchases?.length || 0}</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                           
-                            <div className="user-events">
-                                {user.wishlist?.length > 0 && (
-                                    <div className="wishlist">
-                                        <h4>Ønskeliste</h4>
-                                        <ul>
-                                            {user.wishlist.map(ev => (
-                                                <li key={ev._id}>{ev.title}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                                
-                                {user.previousPurchases?.length > 0 && (
-                                    <div className="purchases">
-                                        <h4>Tidligere kjøp</h4>
-                                        <ul>
-                                            {user.previousPurchases.map(ev => (
-                                                <li key={ev._id}>{ev.title}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </section>
-        </main>
+      <main className="dashboard">
+        <h1>Dashboard</h1>
+        <section className="login-card">
+          <h2>Logg inn</h2>
+          <form className="login-form" onSubmit={handleSubmit}>
+            <label>
+              E-post
+              <input
+                type="email"
+                name="email"
+                value={formValues.email}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <label>
+              Passord
+              <input
+                type="password"
+                name="password"
+                value={formValues.password}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <button type="submit">Logg inn</button>
+          </form>
+        </section>
+      </main>
     );
+  }
+
+  if (loading) {
+    return <p className="loading">Laster data fra Sanity...</p>;
+  }
+
+  // Bkrav vis alle events og brukere fra Sanity
+  return (
+    <main className="dashboard">
+      <div className="dashboard-top">
+        <h1>Min side</h1>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logg ut
+        </button>
+      </div>
+
+      {/* BKRAVet alle events i Sanity */}
+      <section className="events-section">
+        <h3>Alle events i Sanity:</h3>
+        <ul>
+          {allEvents.map((evnt) => (
+            <li key={evnt._id}>
+              {evnt.title} ({evnt.category})
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* BKARVET ALLE brukere med wishlist og purchases */}
+      <section className="users-section">
+        <h3>Alle brukere i Sanity:</h3>
+        {allUsers.map((user) => (
+          <div key={user._id} className="user-item">
+            <p><strong>{user.name}</strong></p>
+            
+            {user.image && (
+              <img 
+                src={urlFor(user.image).width(100).height(100).url()} 
+                alt={user.name} 
+              />
+            )}
+            
+            <p>Wishlist: {user.wishlist?.length || 0} events</p>
+            <p>Purchases: {user.previousPurchases?.length || 0} events</p>
+    
+            {user.wishlist?.length > 0 && (
+              <ul>
+                {user.wishlist.map((wish) => (
+                  <li key={wish._id}>
+                    Wishlist: {wish.title} (ID: {wish.apiId})
+                  </li>
+                ))}
+              </ul>
+            )}
+            
+            {user.previousPurchases?.length > 0 && (
+              <ul>
+                {user.previousPurchases.map((purchase) => (
+                  <li key={purchase._id}>
+                    Purchased: {purchase.title} (ID: {purchase.apiId})
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </section>
+    </main>
+  );
 }
