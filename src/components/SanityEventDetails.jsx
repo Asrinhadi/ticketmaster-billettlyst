@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { getPlace, getType, getDate } from "../assets/utils/helpers";
 import { getSanityEventWithUsers } from "../services/sanityServices";
 import { getEvent } from "../services/ticketmasterServices";
@@ -7,30 +7,51 @@ import { getEvent } from "../services/ticketmasterServices";
 export default function SanityEventDetails() {
   const { id } = useParams();
   
+  // route guard - sjekk om bruker er logget inn
+  const isLoggedIn = localStorage.getItem("loggedInUser") !== null;
+  
   const [sanityData, setSanityData] = useState(null);
   const [ticketmasterData, setTicketmasterData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
- 
+    if (!isLoggedIn) return;
+    
     async function hentEvent() {
-      const sanity = await getSanityEventWithUsers(id);
-      setSanityData(sanity);
-      console.log("sanity", sanity);
-      
-      const tm = await getEvent(id);
-      setTicketmasterData(tm);
-      console.log("ticketmaster", tm);
+      setLoading(true);
+      try {
+        const sanity = await getSanityEventWithUsers(id);
+        setSanityData(sanity);
+        console.log("sanity", sanity);
+        
+        const tm = await getEvent(id);
+        setTicketmasterData(tm);
+        console.log("ticketmaster", tm);
+      } catch (err) {
+        console.error("feil ved henting", err);
+      } finally {
+        setLoading(false);
+      }
     }
     
     hentEvent();
-  }, [id]);
+  }, [id, isLoggedIn]);
 
+  // redirect til dashboard hvis ikke logget inn
+  if (!isLoggedIn) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
-  if (!sanityData) return null;
+  if (loading) return <p>Laster event...</p>;
+  
+  if (!sanityData) return <p>Fant ikke eventet</p>;
 
   const place = getPlace(ticketmasterData);
   const type = getType(ticketmasterData);
   const date = getDate(ticketmasterData);
+
+  const wishlistUsers = sanityData.wishlistUsers || [];
+  const purchaseUsers = sanityData.purchaseUsers || [];
 
   return (
     <div className="event-details">
@@ -46,9 +67,9 @@ export default function SanityEventDetails() {
       
       <section className="wishlist-section">
         <h2>Ønskeliste</h2>
-        {sanityData.wishlistUsers.length > 0 ? (
+        {wishlistUsers.length > 0 ? (
           <ul>
-            {sanityData.wishlistUsers.map((user) => (
+            {wishlistUsers.map((user) => (
               <li key={user._id}>{user.name}</li>
             ))}
           </ul>
@@ -59,9 +80,9 @@ export default function SanityEventDetails() {
       
       <section className="purchase-section">
         <h2>Tidligere kjøp</h2>
-        {sanityData.purchaseUsers.length > 0 ? (
+        {purchaseUsers.length > 0 ? (
           <ul>
-            {sanityData.purchaseUsers.map((user) => (
+            {purchaseUsers.map((user) => (
               <li key={user._id}>{user.name}</li>
             ))}
           </ul>

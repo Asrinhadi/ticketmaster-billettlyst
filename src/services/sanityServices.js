@@ -18,7 +18,7 @@ export async function getSingleEvent(apiId) {
     image
   }`;
   
-  return await client.fetch(query, { apiId });
+  return await sanityClient.fetch(query, { apiId });
 }
 
 
