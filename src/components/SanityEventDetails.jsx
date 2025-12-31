@@ -1,27 +1,40 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { getSingleEvent } from "../services/sanityServices"; 
 import "../styles/EventDetails.scss";
 
 export default function EventDetails() {
-  const { apiId } = useParams(); // hent ID fra URL
+  const { apiId } = useParams();
   
-  const [event, setEvent] = useState(null);
+  const [sanityData, setSanityData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("eventid fra url", apiId); 
+    async function hentEvent() {
+      try {
+        const data = await getSingleEvent(apiId);
+        setSanityData(data);
+        console.log("hva fra sanity?", data); 
+      } catch (err) {
+        console.error("event hentes ikke", err);
+      } finally {
+        setLoading(false);
+      }
+    }
     
-    setLoading(false);
-  }, []);
+    hentEvent();
+  }, [apiId]);
 
-  if (loading) {
-    return <p>Laster event...</p>;
-  }
+  if (loading) return <p>Laster...</p>;
+  
+  if (!sanityData) return <p>Fant ikke eventet</p>;
 
   return (
     <div className="event-details">
-      <h1>Event Details</h1>
-      <p>Event ID {apiId}</p>
+
+      <h1>{sanityData.title}</h1>
+      <p>Kategori: {sanityData.category}</p>
+    
     </div>
   );
 }
