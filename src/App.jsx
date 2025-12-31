@@ -16,6 +16,7 @@ function App() {
           <Route path="/category/:category" element={<CategoryPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sanity-event/:id" element={<SanityEventDetails />} />
+          <Route path="/dashboard/event/:id" element={<SanityEventDetails />} />
         </Routes>
       </Layout>
     
