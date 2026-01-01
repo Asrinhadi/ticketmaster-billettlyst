@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { urlFor } from "../services/sanityServices";
-import { getEvent } from "../services/ticketmasterServices";
+import { fetchMultipleEventsById } from "../services/ticketmasterServices";
 import EventCard from "./EventCard";
 
 
@@ -14,20 +14,17 @@ export default function UserDashboard({ myProfile, onLogout }) {
     async function fetchAllEvents() {
       setLoading(true);
       try {
-     
+
         if (myProfile.wishlist?.length > 0) {
-          const wishEvents = await Promise.all(
-            myProfile.wishlist.map(wish => getEvent(wish.apiId))
-          );
-          setWishlistData(wishEvents.filter(e => e)); 
+          const wishlistIds = myProfile.wishlist.map(wish => wish.apiId);
+          const wishEvents = await fetchMultipleEventsById(wishlistIds);
+          setWishlistData(wishEvents);
         }
         
-       
         if (myProfile.previousPurchases?.length > 0) {
-          const purchEvents = await Promise.all(
-            myProfile.previousPurchases.map(purchase => getEvent(purchase.apiId))
-          );
-          setPurchasedData(purchEvents.filter(e => e)); 
+          const purchaseIds = myProfile.previousPurchases.map(purchase => purchase.apiId);
+          const purchEvents = await fetchMultipleEventsById(purchaseIds);
+          setPurchasedData(purchEvents);
         }
       } catch (err) {
         console.error("feil ved henting av events", err);
@@ -58,19 +55,21 @@ export default function UserDashboard({ myProfile, onLogout }) {
           )}
           <h2>{myProfile.name}</h2>
           <p>E-post: {myProfile.email}</p>
+          {myProfile.age && <p>Alder: {myProfile.age} år</p>}
+          {myProfile.gender && <p>Kjønn: {myProfile.gender}</p>}
         </article>
       </section>
-
       {loading ? (
         <p className="loading">Laster events...</p>
       ) : (
         <>
+        
           <section className="event-grid">
             <h2>Min ønskeliste ({myProfile.wishlist?.length || 0})</h2>
             {wishlistData.length > 0 ? (
               wishlistData.map((event, index) => (
                 <EventCard 
-                  key={`wish_${index}`}
+                  key={`wish_${event?.id || index}`}
                   event={event}
                   linkToDetails="sanity-event"
                 />
@@ -79,13 +78,12 @@ export default function UserDashboard({ myProfile, onLogout }) {
               <p className="empty-list">Ingen events i ønskelisten</p>
             )}
           </section>
-
           <section className="event-grid">
             <h2>Mine kjøpte billetter ({myProfile.previousPurchases?.length || 0})</h2>
             {purchasedData.length > 0 ? (
               purchasedData.map((event, index) => (
                 <EventCard 
-                  key={`purchased_${index}`}
+                  key={`purchased_${event?.id || index}`}
                   event={event}
                   linkToDetails="sanity-event"
                 />
