@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { getPlace, getType, getDate } from "../assets/utils/helpers";
 import { getSanityEventWithUsers } from "../services/sanityServices";
 import { getEvent } from "../services/ticketmasterServices";
+import "../styles/SanityEventDetails.scss";
 
 export default function SanityEventDetails() {
   const { id } = useParams();
@@ -33,7 +34,7 @@ export default function SanityEventDetails() {
 
   return (
     <div className="event-details">
-      <Link to="/dashboard">← Tilbake</Link>
+      <Link to="/dashboard" className="back-link">Tilbake</Link>
       
       <h1>{sanityData.title}</h1>
       <p>Kategori: {sanityData.category}</p>
