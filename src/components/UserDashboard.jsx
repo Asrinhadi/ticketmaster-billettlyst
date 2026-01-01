@@ -1,40 +1,43 @@
 import { useState, useEffect } from "react";
 import { urlFor } from "../services/sanityServices";
 import { getEvent } from "../services/ticketmasterServices";
-import EventCard from "../components/EventCard";
+import EventCard from "./EventCard";
 
 
 export default function UserDashboard({ myProfile, onLogout }) {
   
   const [wishlistData, setWishlistData] = useState([]);
   const [purchasedData, setPurchasedData] = useState([]);
-
- 
-  useEffect(() => {
-    async function fetchWishlistEvents() {
-      const events = await Promise.all(
-        myProfile.wishlist.map(wish => getEvent(wish.apiId))
-      );
-      setWishlistData(events);
-    }
-    
-    if (myProfile.wishlist.length > 0) {
-      fetchWishlistEvents();
-    }
-  }, [myProfile.wishlist]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchPurchasedEvents() {
-      const events = await Promise.all(
-        myProfile.previousPurchases.map(purchase => getEvent(purchase.apiId))
-      );
-      setPurchasedData(events);
+    async function fetchAllEvents() {
+      setLoading(true);
+      try {
+     
+        if (myProfile.wishlist?.length > 0) {
+          const wishEvents = await Promise.all(
+            myProfile.wishlist.map(wish => getEvent(wish.apiId))
+          );
+          setWishlistData(wishEvents.filter(e => e)); 
+        }
+        
+       
+        if (myProfile.previousPurchases?.length > 0) {
+          const purchEvents = await Promise.all(
+            myProfile.previousPurchases.map(purchase => getEvent(purchase.apiId))
+          );
+          setPurchasedData(purchEvents.filter(e => e)); 
+        }
+      } catch (err) {
+        console.error("feil ved henting av events", err);
+      } finally {
+        setLoading(false);
+      }
     }
     
-    if (myProfile.previousPurchases.length > 0) {
-      fetchPurchasedEvents();
-    }
-  }, [myProfile.previousPurchases]);
+    fetchAllEvents();
+  }, [myProfile]);
 
   return (
     <>
@@ -58,35 +61,41 @@ export default function UserDashboard({ myProfile, onLogout }) {
         </article>
       </section>
 
-      <section className="event-grid">
-        <h2>Min ønskeliste ({myProfile.wishlist.length})</h2>
-        {wishlistData.length > 0 ? (
-          wishlistData.map((event, index) => (
-            <EventCard 
-              key={`wish_${index}`}
-              event={event}
-              linkToDetails="sanity-event"
-            />
-          ))
-        ) : (
-          <p>Ingen events i ønskelisten</p>
-        )}
-      </section>
+      {loading ? (
+        <p className="loading">Laster events...</p>
+      ) : (
+        <>
+          <section className="event-grid">
+            <h2>Min ønskeliste ({myProfile.wishlist?.length || 0})</h2>
+            {wishlistData.length > 0 ? (
+              wishlistData.map((event, index) => (
+                <EventCard 
+                  key={`wish_${index}`}
+                  event={event}
+                  linkToDetails="sanity-event"
+                />
+              ))
+            ) : (
+              <p className="empty-list">Ingen events i ønskelisten</p>
+            )}
+          </section>
 
-      <section className="event-grid">
-        <h2>Mine kjøpte billetter ({myProfile.previousPurchases.length})</h2>
-        {purchasedData.length > 0 ? (
-          purchasedData.map((event, index) => (
-            <EventCard 
-              key={`purchased_${index}`}
-              event={event}
-              linkToDetails="sanity-event"
-            />
-          ))
-        ) : (
-          <p>Ingen tidligere kjøp</p>
-        )}
-      </section>
+          <section className="event-grid">
+            <h2>Mine kjøpte billetter ({myProfile.previousPurchases?.length || 0})</h2>
+            {purchasedData.length > 0 ? (
+              purchasedData.map((event, index) => (
+                <EventCard 
+                  key={`purchased_${index}`}
+                  event={event}
+                  linkToDetails="sanity-event"
+                />
+              ))
+            ) : (
+              <p className="empty-list">Ingen tidligere kjøp</p>
+            )}
+          </section>
+        </>
+      )}
     </>
   );
 }

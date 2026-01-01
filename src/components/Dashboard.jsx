@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getAllEvents, getAllUsers, getUserByEmail, urlFor } from "../services/sanityServices";
+import { getAllEvents, urlFor } from "../services/sanityServices";
+import { fetchUserByEmail, fetchAllUsers } from "../services/brukerServices";
 import UserDashboard from "../components/UserDashboard";
 import "../styles/Dashboard.scss";
 
@@ -20,7 +21,7 @@ export default function Dashboard() {
     e.preventDefault();
     
     const email = e.target.emailInput.value;
-    const user = await getUserByEmail(email);
+    const user = await fetchUserByEmail(email);
     
     if (user) {
       const userData = { _id: user._id, name: user.name, email: user.email };
@@ -43,13 +44,13 @@ export default function Dashboard() {
     if (!isLoggedIn) return;
 
     async function fetchData() {
-      const myData = await getUserByEmail(loggedInUser.email);
+      const myData = await fetchUserByEmail(loggedInUser.email);
       setMyProfile(myData);
       
       const events = await getAllEvents();
       setAllEvents(events);
       
-      const users = await getAllUsers();
+      const users = await fetchAllUsers();
       setAllUsers(users);
     }
 
@@ -64,7 +65,7 @@ export default function Dashboard() {
           onLogout={handleLogout}
         />
 
-       
+        {/* B-krav seksjoner - kommentert ut
         <section className="events-section">
           <h3>Alle events i Sanity:</h3>
           <ul>
@@ -76,7 +77,6 @@ export default function Dashboard() {
           </ul>
         </section>
 
-      
         <section className="users-section">
           <h3 
             className="collapsible-header" 
@@ -110,18 +110,32 @@ export default function Dashboard() {
             </div>
           ))}
         </section>
+        */}
       </main>
     ) : (
       <main className="dashboard">
-        <h1>Dashboard</h1>
         <section className="login-card">
           <h2>Logg inn</h2>
           <form className="login-form" onSubmit={handleSubmit}>
-            <label htmlFor="emailInput">E-post</label>
-            <input type="email" id="emailInput" required />
+            <div>
+              <label htmlFor="emailInput">E-post</label>
+              <input 
+                type="email" 
+                id="emailInput" 
+                placeholder="din@epost.com"
+                required 
+              />
+            </div>
             
-            <label htmlFor="passwordInput">Passord</label>
-            <input type="password" id="passwordInput" required />
+            <div>
+              <label htmlFor="passwordInput">Passord</label>
+              <input 
+                type="password" 
+                id="passwordInput" 
+                placeholder="Skriv inn passord"
+                required 
+              />
+            </div>
             
             <button type="submit">Logg inn</button>
           </form>
