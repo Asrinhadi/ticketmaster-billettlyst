@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { urlFor } from "../services/sanityServices";
 import { getEvent } from "../services/ticketmasterServices";
 import EventCard from "../components/EventCard";
-import "../styles/UserDashboard.scss";
+
 
 export default function UserDashboard({ myProfile, onLogout }) {
   
@@ -24,7 +23,6 @@ export default function UserDashboard({ myProfile, onLogout }) {
     }
   }, [myProfile.wishlist]);
 
- 
   useEffect(() => {
     async function fetchPurchasedEvents() {
       const events = await Promise.all(
