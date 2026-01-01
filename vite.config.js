@@ -9,7 +9,7 @@ export default defineConfig({
         target: "https://app.ticketmaster.com",
         changeOrigin: true,
         secure: true,
-        rewrite: (path) => path.replace(/^\/tm/, ""),
+        rewrite: (path) => path.replace(/^\/tm/, "/discovery"),
       },
     },
   },
