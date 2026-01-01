@@ -191,5 +191,19 @@ export async function getCategoryVenues(filterParams = {}) {
 //API dokumentasjon :: https://developer.ticketmaster.com/products-and-docs/apis/discovery-api/v2/
 
 
-
+// henter flere events basert på en liste med ids
+export async function fetchMultipleEventsById(ids) {
+    if (!ids || ids.length === 0) return [];
+    
+    try {
+        const events = await Promise.all(
+            ids.map(id => getEvent(id))
+        );
+        // filtrer bort null-verdier
+        return events.filter(event => event !== null);
+    } catch (err) {
+        console.error("feil ved henting av flere events", err);
+        return [];
+    }
+}
 
