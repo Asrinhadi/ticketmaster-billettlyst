@@ -19,10 +19,11 @@ export default function Dashboard() {
   });
 
   // BRAVET DATA FRA SANITY
+  const [myProfile, setMyProfile] = useState(null); 
   const [allEvents, setAllEvents] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [showAllUsers, setShowAllUsers] = useState(false); 
   function handleChange(e) {
     const { name, value } = e.target;
     setFormValues((prev) => ({ ...prev, [name]: value }));
@@ -61,16 +62,19 @@ export default function Dashboard() {
     async function fetchData() {
       setLoading(true);
       try {
-        const [events, users] = await Promise.all([
+        const [events, users, myData] = await Promise.all([
           getAllEvents(),
-          getAllUsers()
+          getAllUsers(),
+          getUserByEmail(loggedInUser.email) 
         ]);
         
         setAllEvents(events);
         setAllUsers(users);
+        setMyProfile(myData);
         
         console.log("eventsene", events.length);
         console.log("brukerne?", users.length);
+        console.log("min profil", myData);
       } catch (err) {
         console.error(err);
       } finally {
@@ -132,6 +136,57 @@ export default function Dashboard() {
         </button>
       </div>
 
+      <section className="my-profile-section">
+        <h2>Min profil</h2>
+        {myProfile ? (
+          <div className="my-profile">
+            {myProfile.image && (
+              <img 
+                src={urlFor(myProfile.image).width(120).height(120).url()} 
+                alt={myProfile.name}
+                className="profile-image"
+              />
+            )}
+            <p><strong>{myProfile.name}</strong></p>
+            <p>{myProfile.email}</p>
+            
+            <div className="my-lists">
+              <div className="my-wishlist">
+                <h3>Min ønskeliste ({myProfile.wishlist?.length || 0})</h3>
+                {myProfile.wishlist?.length > 0 ? (
+                  <ul>
+                    {myProfile.wishlist.map((wish) => (
+                      <li key={wish._id}>
+                        <Link to={`/dashboard/event/${wish.apiId}`}>{wish.title}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="empty-list">Ingen events i ønskelisten</p>
+                )}
+              </div>
+              
+              <div className="my-purchases">
+                <h3>Mine kjøp ({myProfile.previousPurchases?.length || 0})</h3>
+                {myProfile.previousPurchases?.length > 0 ? (
+                  <ul>
+                    {myProfile.previousPurchases.map((purchase) => (
+                      <li key={purchase._id}>
+                        <Link to={`/dashboard/event/${purchase.apiId}`}>{purchase.title}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="empty-list">Ingen tidligere kjøp</p>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p>Laster profil...</p>
+        )}
+      </section>
+
       {/* BKRAVet alle events i Sanity */}
       <section className="events-section">
         <h3>Alle events i Sanity:</h3>
@@ -152,9 +207,16 @@ export default function Dashboard() {
 
       {/* BKARVET ALLE brukere med wishlist og purchases */}
       <section className="users-section">
-        <h3>Alle brukere i Sanity:</h3>
-        {allUsers.length > 0 ? (
-          allUsers.map((user) => (
+        <h3 
+          className="collapsible-header" 
+          onClick={() => setShowAllUsers(!showAllUsers)}
+        >
+          {showAllUsers ? '▼' : '▶'} Alle brukere i Sanity (B-krav)
+        </h3>
+        
+        {showAllUsers && (
+          allUsers.length > 0 ? (
+            allUsers.map((user) => (
             <div key={user._id} className="user-item">
               <p><strong>{user.name}</strong></p>
               
@@ -193,8 +255,9 @@ export default function Dashboard() {
               )}
             </div>
           ))
-        ) : (
-          <p>Ingen brukere funnet</p>
+          ) : (
+            <p>Ingen brukere funnet</p>
+          )
         )}
       </section>
     </main>
