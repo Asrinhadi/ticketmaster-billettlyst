@@ -9,17 +9,17 @@ export default function EventCard({
     onToggleWishlist,
     clickable = true,
     showTicketLink = false,
-    showReadMore = false
+    showReadMore = false,
+    linkToDetails = "event"
 }) {
     if (!event) return null;
+
     let venue = null;
     let date = null;
 
     if (event.type === 'venue') {
-      
         venue = event;
     } else {
-       
         venue = event._embedded?.venues?.[0];
         date = event.dates?.start?.localDate;
     }
@@ -29,11 +29,11 @@ export default function EventCard({
     function handleHeartClick(e) {
         e.preventDefault();
         e.stopPropagation();
-        
         if (onToggleWishlist) {
             onToggleWishlist(event.id);
         }
     }
+
     function getLocationText() {
         if (!venue) return null;
         
@@ -108,7 +108,7 @@ export default function EventCard({
     return (
         <article className="event-card">
             {clickable ? (
-                <Link to={`/event/${event.id}`}>{cardContent}</Link>
+                <Link to={`/${linkToDetails}/${event.id}`}>{cardContent}</Link>
             ) : (
                 <div>{cardContent}</div>
             )}
