@@ -211,7 +211,7 @@ export default function Dashboard() {
           className="collapsible-header" 
           onClick={() => setShowAllUsers(!showAllUsers)}
         >
-          {showAllUsers ? '▼' : '▶'} Alle brukere i Sanity (B-krav)
+          Alle brukere i Sanity (B-krav)
         </h3>
         
         {showAllUsers && (
