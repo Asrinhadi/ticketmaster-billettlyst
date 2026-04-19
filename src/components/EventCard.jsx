@@ -60,7 +60,7 @@ export default function EventCard({
             
             {showHeart && (
                 <button 
-                    className={isInWishlist ? 'wishlist-btn active' : 'wishlist-btn'}
+                    className={isInWishlist ? 'wishlist-btn' : 'wishlist-btn active'}
                     onClick={handleHeartClick}
                 >
                     <Heart size={18} />

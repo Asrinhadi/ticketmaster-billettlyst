@@ -24,7 +24,7 @@ export default function CategoryPage() {
         if (!segmentId) return;
         
         hentData();
-    }, [segmentId, filterParams]);
+    }, [segmentId]);
 
     // bygger query streng for suggestendepunktet
     function buildSuggestQuery() {

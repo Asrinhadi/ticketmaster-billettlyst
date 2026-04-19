@@ -24,7 +24,7 @@ export default function Home() {
 
     useEffect(() => {
         loadFestivals();
-        loadCityEvents("Oslo");
+        loadCityEvents("Stockholm");
     }, []);
 
     return (

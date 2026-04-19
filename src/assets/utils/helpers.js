@@ -5,7 +5,7 @@ const PLACEHOLDER = "https://placehold.co/600x400?text=Billettlyst";
 
 export function formatDate(date) {
     if (!date) return "";
-    return date.split("-").reverse().join(".");
+    return date.split("-").join(".");
 }
 
 
