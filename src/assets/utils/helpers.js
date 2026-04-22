@@ -13,7 +13,7 @@ export function getImage(item, minW = 300, maxW = 800) {
     if (!item?.images) return PLACEHOLDER;
     
     const img = item.images.find(i => 
-        i.ratio === "16_9" && i.width >= minW && i.width <= maxW
+        i.ratio === "16:9" && i.width >= minW && i.width <= maxW
     );
     
     return img?.url || PLACEHOLDER;
