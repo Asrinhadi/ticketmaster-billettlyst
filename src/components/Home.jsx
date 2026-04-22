@@ -7,7 +7,7 @@ import { FESTIVAL_IDS } from '../constants/festivals';
 import '../styles/Home.scss';
 
 export default function Home() {
-    const [festivals, setFestivals] = useState([]);
+    const [festivals, setFestivals] = useState(null);
     const [events, setEvents] = useState([]);
     const [activeCity, setActiveCity] = useState("Oslo");
 
